@@ -1,5 +1,5 @@
 #  XPANDO - make ReadyForIOS1
-version 0.1.6
+version 0.1.7
 
 ## Takes Multiple Outputs from T9 and Bends Them Into IOS APP Format 
 

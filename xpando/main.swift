@@ -14,6 +14,52 @@ extension Challenge:Comparable {
     lhs.question < rhs.question
   }
 }
+extension String {
+  var fixup : String {
+    return self.replacingOccurrences(of: ",", with: ";")
+  }
+}
+func headerCSV() -> String {
+  return "Question,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Correct,Explanation,ID\n"
+}
+
+func onelineCSV(from c:Challenge) -> String {
+  var line = c.question.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
+  var done = 0
+  for a in c.answers.dropLast(max(0,c.answers.count-4)) {
+    line += a.fixup + ","
+    done += 1
+  }
+  for _ in done..<4 {
+    line += ","
+  }
+
+  line += c.correct.fixup + ","
+  line +=  (c.explanation?.fixup ?? "") +  "," + c.id
+  return line + "\n" // need to separate
+}
+
+func flatten_essence( challenges:[Challenge],outputCSVFile: String) throws {
+
+  if challenges == [] { print("No challenges in input"); return}
+ // let x = outputCSVFile.absoluteString.dropFirst(7) //remove file://
+  var linecount = 0
+  if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) {
+ //   print("\(x) created successfully.")
+  } else {
+    print("\(outputCSVFile) not created."); return
+  }
+  let outputHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputCSVFile))
+  outputHandle.write(headerCSV().data(using:.utf8)!)
+  for challenge in challenges {
+    let x = onelineCSV(from:challenge)
+    outputHandle.write(x.data(using: .utf8)!)
+    linecount += 1
+  }
+  try outputHandle.close()
+  print(">Wrote \(linecount) lines to \(outputCSVFile)")
+}
+
 func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
   
   func fetchTopicData(_ tdurl:String ) throws -> TopicData {
@@ -135,7 +181,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.1.6",
+    version: "0.1.7",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -152,7 +198,10 @@ struct Xpando: ParsableCommand {
   @Option(name: .shortAndLong, help: "The name of the topics data file .")
   var tdPath: String = "TopicData.json"
   @Option(name: .shortAndLong, help: "The name of the ios output file.")
-  var outputFile: String = "readyforiosx.json"
+  var iosFile: String = "readyforiosx.json"
+  @Option(name: .shortAndLong, help: "The name of the csv output file.")
+  var csvFile: String = "flattened.csv"
+  
   
     var processed = 0
     var included = 0
@@ -213,8 +262,12 @@ struct Xpando: ParsableCommand {
           last = q
         }
         print(">Exact Duplicates detected: \(dupes)")
+        // produce CSV file for numbers, excel
+        if csvFile != "" {
+          try flatten_essence(challenges:allQuestions, outputCSVFile: csvFile)
+        }
         // now blend for ios
-        if outputFile != "" {
+        if iosFile != "" {
           let playdata = try blend(allQuestions, tdPath: tdPath)
           // write the deduped data
           let encoder = JSONEncoder()
@@ -222,9 +275,9 @@ struct Xpando: ParsableCommand {
           encoder.outputFormatting = .prettyPrinted
           do {
             let outputData = try encoder.encode(playdata)
-            let outurl = URL(fileURLWithPath: outputFile)
+            let outurl = URL(fileURLWithPath: iosFile)
             try? outputData.write(to: outurl)
-            print("Data files merged successfully - \(allQuestions.count) saved to \(outputFile)")
+            print("Data files merged successfully - \(allQuestions.count) saved to \(iosFile)")
           }
           catch {
             print("Encoding error: \(error)")
