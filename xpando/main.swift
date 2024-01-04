@@ -135,7 +135,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.1.5",
+    version: "0.1.6",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
