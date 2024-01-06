@@ -1,5 +1,6 @@
 #  XPANDO - make ReadyForIOS1
-version 0.1.7
+
+version 0.1.8 - extra deleteflag column in generated csv spreadsheet
 
 ## Takes Multiple Outputs from T9 and Bends Them Into IOS APP Format 
 

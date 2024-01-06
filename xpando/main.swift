@@ -20,10 +20,10 @@ extension String {
   }
 }
 func headerCSV() -> String {
-  return "Question,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Correct,Explanation,ID\n"
+  return "Question,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Correct,Explanation,ID,DELETEFLAG\n"
 }
 
-func onelineCSV(from c:Challenge) -> String {
+func onelineCSV(from c:Challenge,atPath:String) -> String {
   var line = c.question.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
@@ -33,26 +33,24 @@ func onelineCSV(from c:Challenge) -> String {
   for _ in done..<4 {
     line += ","
   }
-
   line += c.correct.fixup + ","
-  line +=  (c.explanation?.fixup ?? "") +  "," + c.id
+  line +=  (c.explanation?.fixup ?? "") +  "," + atPath + ","
   return line + "\n" // need to separate
 }
 
-func flatten_essence( challenges:[Challenge],outputCSVFile: String) throws {
+func flatten_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String]) throws {
 
   if challenges == [] { print("No challenges in input"); return}
- // let x = outputCSVFile.absoluteString.dropFirst(7) //remove file://
-  var linecount = 0
-  if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) {
- //   print("\(x) created successfully.")
+
+  if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) { 
   } else {
     print("\(outputCSVFile) not created."); return
   }
   let outputHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputCSVFile))
   outputHandle.write(headerCSV().data(using:.utf8)!)
+  var linecount = 0
   for challenge in challenges {
-    let x = onelineCSV(from:challenge)
+    let x = onelineCSV(from:challenge,atPath:fullpaths[linecount])
     outputHandle.write(x.data(using: .utf8)!)
     linecount += 1
   }
@@ -181,7 +179,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.1.7",
+    version: "0.1.8",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -212,8 +210,10 @@ struct Xpando: ParsableCommand {
       let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
       print(">Processing: ",directoryPaths.joined(separator:","))
       print(">Filters: ",allfilters.joined(separator: ","))
+      var fullPaths:[String] = []
         expand(dirPaths: directoryPaths) { fullpath ,filename in
           processed += 1
+          fullPaths.append(fullpath)
             // Your filter condition goes here
           // apply the filename filter
           var include = false
@@ -248,6 +248,8 @@ struct Xpando: ParsableCommand {
           return include
         }
       print(">Filter string: \(filter) selected \(included) of \(processed)")
+      
+      
       if dedupe {
         var dupes = 0
         allQuestions.sort()
@@ -262,9 +264,11 @@ struct Xpando: ParsableCommand {
           last = q
         }
         print(">Exact Duplicates detected: \(dupes)")
+        
+        
         // produce CSV file for numbers, excel
         if csvFile != "" {
-          try flatten_essence(challenges:allQuestions, outputCSVFile: csvFile)
+          try flatten_essence(challenges:allQuestions, outputCSVFile: csvFile, fullpaths:fullPaths)
         }
         // now blend for ios
         if iosFile != "" {

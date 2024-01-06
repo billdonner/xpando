@@ -73,7 +73,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--filter &quot;The World Series&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--filter &quot;&quot;"
@@ -81,7 +81,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--quiet true"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--dedupe true"
