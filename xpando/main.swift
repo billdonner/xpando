@@ -20,11 +20,11 @@ extension String {
   }
 }
 func headerCSV() -> String {
-  return "Question,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Correct,Explanation,ID,DELETEFLAG\n"
+  return "DELETEFLAG,Question,Correct,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Explanation,ID\n"
 }
 
 func onelineCSV(from c:Challenge,atPath:String) -> String {
-  var line = c.question.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
+  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -33,8 +33,7 @@ func onelineCSV(from c:Challenge,atPath:String) -> String {
   for _ in done..<4 {
     line += ","
   }
-  line += c.correct.fixup + ","
-  line +=  (c.explanation?.fixup ?? "") +  "," + atPath + ","
+  line +=  (c.explanation?.fixup ?? "") +  "," + atPath
   return line + "\n" // need to separate
 }
 
@@ -179,7 +178,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.1.8",
+    version: "0.1.9",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]

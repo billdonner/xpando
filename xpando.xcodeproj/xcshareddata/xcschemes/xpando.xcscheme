@@ -56,7 +56,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/users/fs/r"
+            argument = "/users/fs/db/v40"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
