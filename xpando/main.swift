@@ -20,11 +20,11 @@ extension String {
   }
 }
 func headerCSV() -> String {
-  return "DELETEFLAG,Question,Correct,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Explanation,ID\n"
+  return "DELETEFLAG,Question,Correct,Model,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Explanation,ID\n"
 }
 
 func onelineCSV(from c:Challenge,atPath:String) -> String {
-  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
+  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + c.aisource.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -178,7 +178,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.1.9",
+    version: "0.2.0",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -206,6 +206,7 @@ struct Xpando: ParsableCommand {
   
     mutating func run() throws {
       let decoder = JSONDecoder()
+      print("Xpando version \(Self.configuration.version)")
       let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
       print(">Processing: ",directoryPaths.joined(separator:","))
       print(">Filters: ",allfilters.joined(separator: ","))
