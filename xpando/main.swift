@@ -147,6 +147,14 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
         challenges.append(item)//.makeChallenge())
       }
     }
+    
+    challenges.sort(by:) {
+      if $0.topic < $1.topic { return true }
+      else if $0.topic > $1.topic { return false }
+      else { // equal id
+        return $0.date < $1.date
+      }
+    }
     let gda = GameData(topic: t.name, challenges: challenges)
     gamedatum.append(gda)
   }

@@ -1,6 +1,6 @@
 #  XPANDO - make ReadyForIOS1
 
-version 0.2.0 
+version 0.2.0 pushed for carol, certainly has model column
 
 ## Takes Multiple Outputs from T9 and Bends Them Into IOS APP Format 
 
