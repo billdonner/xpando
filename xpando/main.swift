@@ -20,11 +20,11 @@ extension String {
   }
 }
 func headerCSV() -> String {
-  return "DELETEFLAG,Question,Correct,Model,Topic,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Explanation,ID\n"
+  return q20kshare_csvcols + "\n"
 }
 
 func onelineCSV(from c:Challenge,atPath:String) -> String {
-  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + c.aisource.fixup + "," + c.topic.fixup + "," + c.hint.fixup + ","
+  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + c.topic.fixup + "," + c.aisource.fixup +  "," + c.hint.fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -159,12 +159,10 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
     gamedatum.append(gda)
   }
 
-  let playdata = PlayData(topicData:rewrittenTd,
+  return PlayData(topicData:rewrittenTd,
                           gameDatum: gamedatum,
                           playDataId: UUID().uuidString,
                           blendDate: Date() )
-  
-return playdata
 }
 func expand(dirPaths: [String], filterCallback: (String,String ) -> Bool) {
     let fileManager = FileManager.default
@@ -181,12 +179,17 @@ func expand(dirPaths: [String], filterCallback: (String,String ) -> Bool) {
 func contained(_ string: String, within: String) -> Bool {
     return within.range(of: string, options: .caseInsensitive) != nil
 }
- 
+
+func capitalized(_ x:Challenge) -> Challenge   {
+  Challenge(question: x.question, topic: x.topic.capitalized, hint: x.hint, answers: x.answers, correct: x.correct,
+            explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
+  
+}
 struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.2.0",
+    version: "0.2.3",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -243,7 +246,9 @@ struct Xpando: ParsableCommand {
                    if !quiet {
                      print (challenge.question, ",",challenge.id)
                    }
-                   allQuestions.append(challenge)
+                   // fix topic capitalization issues
+                   let t = capitalized(challenge)
+                   allQuestions.append(t)
                  }
                }
              } else {
