@@ -189,7 +189,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.2.3",
+    version: "0.2.4",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -222,10 +222,11 @@ struct Xpando: ParsableCommand {
       print(">Processing: ",directoryPaths.joined(separator:","))
       print(">Filters: ",allfilters.joined(separator: ","))
       var fullPaths:[String] = []
-        expand(dirPaths: directoryPaths) { fullpath ,filename in
+      expand(dirPaths: directoryPaths) { fullpath ,filename in
+        if !fullpath.hasPrefix(".") {
           processed += 1
           fullPaths.append(fullpath)
-            // Your filter condition goes here
+          // Your filter condition goes here
           // apply the filename filter
           var include = false
           if allfilters.count == 0 {
@@ -237,29 +238,31 @@ struct Xpando: ParsableCommand {
               }
             }
           }
-           if include  {
+          if include  {
             included += 1
-             if dedupe {
-               // open the file to get to the actual challenge
-               if let data = try? Data(contentsOf: URL(fileURLWithPath: fullpath)) {
-                 if let challenge = try? decoder.decode(Challenge.self,from:data) {
-                   if !quiet {
-                     print (challenge.question, ",",challenge.id)
-                   }
-                   // fix topic capitalization issues
-                   let t = capitalized(challenge)
-                   allQuestions.append(t)
-                 }
-               }
-             } else {
-               // not deduping
-               if !quiet {
-                 print (">selected: " + fullpath)
-               }
-             }
+            if dedupe {
+              // open the file to get to the actual challenge
+              if let data = try? Data(contentsOf: URL(fileURLWithPath: fullpath)) {
+                if let challenge = try? decoder.decode(Challenge.self,from:data) {
+                  if !quiet {
+                    print (challenge.question, ",",challenge.id)
+                  }
+                  // fix topic capitalization issues
+                  let t = capitalized(challenge)
+                  allQuestions.append(t)
+                }
+              }
+            } else {
+              // not deduping
+              if !quiet {
+                print (">selected: " + fullpath)
+              }
+            }
           }
           return include
         }
+        return false
+      }
       print(">Filter string: \(filter) selected \(included) of \(processed)")
       
       
