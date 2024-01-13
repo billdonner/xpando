@@ -1,6 +1,10 @@
 #  XPANDO - make ReadyForIOS1
 
-version 0.2.4
+version 0.2.5 normalize topic names:
+- convert spaces and tabs to _ underscore _
+- convert everything thats not alphanumeric to dashes
+- capitalize the first letter of each word
+- trim and squeeze out unnecessary spaces and tabs
 
 ## Takes Multiple Outputs from T9 and Bends Them Into IOS APP Format 
 

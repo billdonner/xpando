@@ -14,8 +14,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "273"
-            endingLineNumber = "273"
+            startingLineNumber = "300"
+            endingLineNumber = "300"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -77,8 +77,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -125,8 +125,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "235"
-            endingLineNumber = "235"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
             landmarkName = "run()"
             landmarkType = "7">
          </BreakpointContent>
@@ -141,8 +141,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -175,6 +175,54 @@
                   startingLineNumber = "251"
                   endingLineNumber = "251"
                   offsetFromSymbolStart = "1752">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "200DFC7B-E50A-44B9-96CE-EBB1E1A8E3A6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "xpando/main.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "fetchTopicData(_:)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "200DFC7B-E50A-44B9-96CE-EBB1E1A8E3A6 - 512babe5a3dfb873"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fetchTopicData(Swift.String) throws -&gt; q20kshare.TopicData"
+                  moduleName = "xpando"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/billdonner/Documents/xpando/xpando/main.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "91"
+                  endingLineNumber = "91"
+                  offsetFromSymbolStart = "1240">
+               </Location>
+               <Location
+                  uuid = "200DFC7B-E50A-44B9-96CE-EBB1E1A8E3A6 - 512babe5a3dfb850"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fetchTopicData(Swift.String) throws -&gt; q20kshare.TopicData"
+                  moduleName = "xpando"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/billdonner/Documents/xpando/xpando/main.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "92"
+                  endingLineNumber = "92"
+                  offsetFromSymbolStart = "1240">
                </Location>
             </Locations>
          </BreakpointContent>

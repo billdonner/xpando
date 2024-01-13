@@ -9,6 +9,25 @@ import Foundation
 import ArgumentParser
 import q20kshare
 
+func transformString(_ str: String) -> String {
+
+    // Trim and squeeze out unnecessary spaces and tabs
+    var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
+    let components = result.components(separatedBy: .whitespacesAndNewlines)
+    result = components.filter { !$0.isEmpty }.joined(separator: " ")
+
+    // Capitalize the first letter of each word
+    result = result.capitalized
+
+    // Convert spaces and understores to underscores
+    result = result.replacingOccurrences(of: " ", with: "_")
+    
+    // Convert everything thats not alphanumeric (or underscore) to dashes
+    result = result.replacingOccurrences(of: "[^a-zA-Z0-9_]+", with: "-", options: .regularExpression)
+
+    return result
+}
+
 extension Challenge:Comparable {
   public static func < (lhs:  Challenge, rhs:  Challenge) -> Bool {
     lhs.question < rhs.question
@@ -24,7 +43,7 @@ func headerCSV() -> String {
 }
 
 func onelineCSV(from c:Challenge,atPath:String) -> String {
-  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + c.topic.fixup + "," + c.aisource.fixup +  "," + c.hint.fixup + ","
+  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + transformString(c.topic).fixup + "," + c.aisource.fixup +  "," + c.hint.fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -63,7 +82,15 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
     // Load substitutions JSON file,throw out all of the metadata for now
     let xdata = try Data(contentsOf: URL(fileURLWithPath: tdurl))
     let decoded = try JSONDecoder().decode(TopicData.self, from:xdata)
-    return decoded
+    // normalize the topic names
+    var newtops:[Topic]=[]
+    for topic in decoded.topics {
+      let y = transformString(topic.name)
+      let x = Topic(name:y,subject:"",pic:"",notes:"")
+      newtops.append(x)
+    }
+    let newTopicData:TopicData = TopicData(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, purpose: decoded.purpose, topics: newtops)
+    return newTopicData
   }
 
   
@@ -108,7 +135,7 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
   for d in dedupedData {
     if d.topic != lasttopic {
       if topicitems != 0 {
-        entries.append(Entry(topic: lasttopic,count: topicitems))
+        entries.append(Entry(topic: transformString(lasttopic),count: topicitems))
       }
       lasttopic = d.topic
       topicitems = 1
@@ -117,7 +144,7 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
     }
   }
   if topicitems != 0 {
-    entries.append(Entry(topic: lasttopic,count: topicitems))
+    entries.append(Entry(topic: transformString(lasttopic),count: topicitems))
   }
   print("+======TOPICS======+")
   for e in entries {
@@ -181,7 +208,7 @@ func contained(_ string: String, within: String) -> Bool {
 }
 
 func capitalized(_ x:Challenge) -> Challenge   {
-  Challenge(question: x.question, topic: x.topic.capitalized, hint: x.hint, answers: x.answers, correct: x.correct,
+  Challenge(question: x.question, topic: transformString(x.topic), hint: x.hint, answers: x.answers, correct: x.correct,
             explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
   
 }
