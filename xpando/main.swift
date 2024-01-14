@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import q20kshare
 
-func transformString(_ str: String) -> String {
+func normalize(_ str: String) -> String {
 
     // Trim and squeeze out unnecessary spaces and tabs
     var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,8 +22,8 @@ func transformString(_ str: String) -> String {
     // Convert spaces and understores to underscores
     result = result.replacingOccurrences(of: " ", with: "_")
     
-    // Convert everything thats not alphanumeric (or underscore) to dashes
-    result = result.replacingOccurrences(of: "[^a-zA-Z0-9_]+", with: "-", options: .regularExpression)
+    // Convert everything thats not alphanumeric (or underscore or quote) to dashes
+    result = result.replacingOccurrences(of: "[^a-zA-Z0-9_']+", with: "-", options: .regularExpression)
 
     return result
 }
@@ -42,8 +42,9 @@ func headerCSV() -> String {
   return q20kshare_csvcols + "\n"
 }
 
-func onelineCSV(from c:Challenge,atPath:String) -> String {
-  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + transformString(c.topic).fixup + "," + c.aisource.fixup +  "," + c.hint.fixup + ","
+func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> String {
+  let topic = subtopics[c.topic] ?? c.topic
+  var line =  "," + c.question.fixup + "," + c.correct.fixup + "," + normalize(topic).fixup + "," + c.aisource.fixup +  "," + c.hint.fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -56,7 +57,7 @@ func onelineCSV(from c:Challenge,atPath:String) -> String {
   return line + "\n" // need to separate
 }
 
-func flatten_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String]) throws {
+func csv_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String],subtopics:[String:String]) throws {
 
   if challenges == [] { print("No challenges in input"); return}
 
@@ -68,34 +69,52 @@ func flatten_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[St
   outputHandle.write(headerCSV().data(using:.utf8)!)
   var linecount = 0
   for challenge in challenges {
-    let x = onelineCSV(from:challenge,atPath:fullpaths[linecount])
+    let x = onelineCSV(from:challenge,atPath:fullpaths[linecount],subtopics:subtopics)
     outputHandle.write(x.data(using: .utf8)!)
     linecount += 1
   }
   try outputHandle.close()
   print(">Wrote \(linecount) lines to \(outputCSVFile)")
 }
-
-func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
   
-  func fetchTopicData(_ tdurl:String ) throws -> TopicData {
+  func fetchTopicData(_ tdurl:String ) throws -> TopicGroup {
     // Load substitutions JSON file,throw out all of the metadata for now
     let xdata = try Data(contentsOf: URL(fileURLWithPath: tdurl))
-    let decoded = try JSONDecoder().decode(TopicData.self, from:xdata)
+    let decoded = try JSONDecoder().decode(TopicGroup.self, from:xdata)
     // normalize the topic names
     var newtops:[Topic]=[]
     for topic in decoded.topics {
-      let y = transformString(topic.name)
-      let x = Topic(name:y,subject:"",pic:"",notes:"")
-      newtops.append(x)
-    }
-    let newTopicData:TopicData = TopicData(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, purpose: decoded.purpose, topics: newtops)
+      newtops.append(Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics))
+      }
+    let newTopicData:TopicGroup = TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops)
     return newTopicData
   }
 
+func buildSubtopics (_ topicData: TopicGroup) -> [String:String] {
+  var subTopicTree : [String:String ] = [:]
+  for topic in topicData.topics {// subtopics are optional
+   // print(topic,topic.subtopics)
+        for subtopic in topic.subtopics  {
+          if  let zzz = subTopicTree[normalize(subtopic)] {
+            print("Warning subtopic \(subtopic) is already in topic \(zzz) but you are trying to also add it to topic \(topic)")
+          } else {
+            // not in tree so add it
+            subTopicTree[normalize(subtopic)] = normalize(topic.name)
+          }
+    }
+  }
+  // print the subtopic tree
+  if subTopicTree != [:] {
+    print("===SubTopics===")
+    for z in subTopicTree.enumerated() {
+      print(z.offset,z.element)
+    }
+  }
+  return subTopicTree
+}
+
+func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],topicData:TopicGroup) throws -> PlayData {
   
-  let topicData = try fetchTopicData(tdPath)
-  let tdblocks = topicData.topics
   var dedupedData: [Challenge] = []
   // dedupe phase I = sort by ID then by reverse time
   let x = mergedData.sorted(by:) {
@@ -107,12 +126,19 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
   }
   var lastid = ""
   // dont copy if same as last id
-  for d in x {
-    if d.id != lastid {
-      dedupedData.append(d)
-      lastid = d.id
+  for challenge in x {
+    if challenge.id != lastid {
+      //modify the challenge so it uses subtopics if e have one
+      if let zz = subTopicTree[challenge.topic] {
+        let modchallenge = Challenge(question: challenge.question, topic: zz, hint: challenge.hint, answers: challenge.answers, correct: challenge.correct, explanation: challenge.explanation, id: challenge.id, date: challenge.date, aisource: challenge.aisource)
+        dedupedData.append(modchallenge)
+      } else {
+        dedupedData.append(challenge)
+      }
+      lastid = challenge.id
     }
   }
+  
   // now sort by topic and time
   dedupedData.sort(by:) {
     if $0.topic < $1.topic { return true }
@@ -124,18 +150,21 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
   if dedupedData.count != mergedData.count {
     print("\(mergedData.count - dedupedData.count) duplicates removed")
   }
+
+  
+  
   // now produce a topic manifest
-  struct Entry {
+  struct GroupTopicCounts {
     var topic:String
     var count:Int
   }
   var lasttopic = ""
   var topicitems = 0
-  var entries:[Entry] = []
+  var groupTopicCounts:[GroupTopicCounts] = []
   for d in dedupedData {
     if d.topic != lasttopic {
       if topicitems != 0 {
-        entries.append(Entry(topic: transformString(lasttopic),count: topicitems))
+        groupTopicCounts.append(GroupTopicCounts(topic: normalize(lasttopic),count: topicitems))
       }
       lasttopic = d.topic
       topicitems = 1
@@ -144,26 +173,29 @@ func blend(_ mergedData:[Challenge],tdPath:String) throws -> PlayData {
     }
   }
   if topicitems != 0 {
-    entries.append(Entry(topic: transformString(lasttopic),count: topicitems))
+    groupTopicCounts.append(GroupTopicCounts(topic: normalize(lasttopic),count: topicitems))
   }
   print("+======TOPICS======+")
-  for e in entries {
+  for e in groupTopicCounts {
     print (" \(e.topic)   \(e.count)  ")
   }
   print("+==================+")
   
-  let topics =  entries.map {
+  let topics =  groupTopicCounts.map {
     var pic = "pencil"
     var notes = "Notes for \(pic)"
-    for td in tdblocks {
-      if $0.topic == td.name { pic = td.pic ; notes = td.notes; break}
+    var subtopics :[String] = []
+    var subj = $0.topic
+    
+    for td in topicData.topics {
+      if $0.topic == td.name {subj = td.subject; pic = td.pic ; notes = td.notes; subtopics = td.subtopics; break}
     }
-    return Topic(name: $0.topic, subject: $0.topic, pic:pic,   notes: notes)
+    return Topic(name: $0.topic, subject: subj, pic:pic,   notes: notes,subtopics: subtopics)
   }
  
-  let rewrittenTd = TopicData(description:topicData.description,version:topicData.version,
+  let rewrittenTd = TopicGroup(description:topicData.description,version:topicData.version,
                      author:topicData.author, date: "\(Date())",
-                     purpose:topicData.purpose,topics:topics)
+                     topics:topics)
   
   var gamedatum: [GameData] = []
   for t in topics {
@@ -208,7 +240,7 @@ func contained(_ string: String, within: String) -> Bool {
 }
 
 func capitalized(_ x:Challenge) -> Challenge   {
-  Challenge(question: x.question, topic: transformString(x.topic), hint: x.hint, answers: x.answers, correct: x.correct,
+  Challenge(question: x.question, topic: normalize(x.topic), hint: x.hint, answers: x.answers, correct: x.correct,
             explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
   
 }
@@ -216,7 +248,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.2.4",
+    version: "0.2.7",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -237,7 +269,6 @@ struct Xpando: ParsableCommand {
   @Option(name: .shortAndLong, help: "The name of the csv output file.")
   var csvFile: String = "flattened.csv"
   
-  
     var processed = 0
     var included = 0
     var allQuestions:[Challenge] = []
@@ -249,6 +280,10 @@ struct Xpando: ParsableCommand {
       print(">Processing: ",directoryPaths.joined(separator:","))
       print(">Filters: ",allfilters.joined(separator: ","))
       var fullPaths:[String] = []
+      
+      let topicData = try fetchTopicData(tdPath)
+      // now build a dictionary marrying subtopics to their main topic
+      let subTopicTree = buildSubtopics(topicData)
       expand(dirPaths: directoryPaths) { fullpath ,filename in
         if !fullpath.hasPrefix(".") {
           processed += 1
@@ -311,14 +346,13 @@ struct Xpando: ParsableCommand {
         
         // produce CSV file for numbers, excel
         if csvFile != "" {
-          try flatten_essence(challenges:allQuestions, outputCSVFile: csvFile, fullpaths:fullPaths)
+          try csv_essence(challenges:allQuestions, outputCSVFile: csvFile, fullpaths:fullPaths, subtopics: subTopicTree)
         }
         // now blend for ios
         if iosFile != "" {
-          let playdata = try blend(allQuestions, tdPath: tdPath)
+          let playdata = try blend(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )
           // write the deduped data
           let encoder = JSONEncoder()
-          // encoder.dateEncodingStrategy = .iso8601
           encoder.outputFormatting = .prettyPrinted
           do {
             let outputData = try encoder.encode(playdata)

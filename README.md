@@ -1,5 +1,13 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.2.7 
+
+version 0.2.6 introduce sub-topics:
+ - each topic now has a few subtopics, which are named just like topics
+ - the AI deals with subtopics viq the pumpuser.txt script
+ - Xpando joins together the subtopics into regular topics via readyforios1
+ 
+
 version 0.2.5 normalize topic names:
 - convert spaces and tabs to _ underscore _
 - convert everything thats not alphanumeric to dashes
