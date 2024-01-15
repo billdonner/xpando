@@ -60,11 +60,15 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /users/fs/readyforios1.json"
+            argument = "-m /users/fs/readyforios1.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-c /users/fs/q20data.csv"
+            argument = "-i /users/fs/q20data.csv"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-o /users/fs/q20data.csv"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

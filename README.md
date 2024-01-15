@@ -1,6 +1,8 @@
 #  XPANDO - make ReadyForIOS1
 
-version 0.2.7 
+version 0.2.7 runs purgatoried within
+  - one new argument specifies input csvfile with lines to replace and delete items
+  - flags are now "-m" for readyforios1, "-i" for inputcsvfile "-o" for outputfile
 
 version 0.2.6 introduce sub-topics:
  - each topic now has a few subtopics, which are named just like topics

@@ -14,8 +14,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
+            startingLineNumber = "497"
+            endingLineNumber = "497"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -77,8 +77,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "295"
-            endingLineNumber = "295"
+            startingLineNumber = "457"
+            endingLineNumber = "457"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -125,8 +125,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
+            startingLineNumber = "459"
+            endingLineNumber = "459"
             landmarkName = "run()"
             landmarkType = "7">
          </BreakpointContent>
@@ -141,8 +141,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "314"
-            endingLineNumber = "314"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -189,8 +189,8 @@
             filePath = "xpando/main.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
             landmarkName = "fetchTopicData(_:)"
             landmarkType = "9">
             <Locations>
@@ -238,54 +238,6 @@
                   startingLineNumber = "90"
                   endingLineNumber = "90"
                   offsetFromSymbolStart = "1180">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4D055167-AD99-4C93-9C79-95604B95ADB9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "xpando/main.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
-            landmarkName = "blend(_:tdPath:subTopicTree:topicData:)"
-            landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "4D055167-AD99-4C93-9C79-95604B95ADB9 - ff94bd67b9ecd226"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "xpando.blend(_: Swift.Array&lt;q20kshare.Challenge&gt;, tdPath: Swift.String) throws -&gt; q20kshare.PlayData"
-                  moduleName = "xpando"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/billdonner/Documents/xpando/xpando/main.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
-                  offsetFromSymbolStart = "5436">
-               </Location>
-               <Location
-                  uuid = "4D055167-AD99-4C93-9C79-95604B95ADB9 - e9a78114ddf76278"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "xpando.blend(_: Swift.Array&lt;q20kshare.Challenge&gt;, tdPath: Swift.String, subTopicTree: Swift.Dictionary&lt;Swift.String, Swift.String&gt;, topicData: q20kshare.TopicGroup) throws -&gt; q20kshare.PlayData"
-                  moduleName = "xpando"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/billdonner/Documents/xpando/xpando/main.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
-                  offsetFromSymbolStart = "2932">
                </Location>
             </Locations>
          </BreakpointContent>

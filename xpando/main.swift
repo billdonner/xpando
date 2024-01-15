@@ -8,7 +8,163 @@
 import Foundation
 import ArgumentParser
 import q20kshare
+struct GroupTopicCounts {
+  var topic:String
+  var count:Int
+}
 
+var outcsv:String = ""
+var incsv:String = ""
+var replaced = 0
+var deleted = 0
+
+func writeDataToFile(data:Data, filePath: String) {
+    do {
+        // Write data to file
+        try data.write(to: URL(fileURLWithPath: filePath))
+    } catch {
+        print("Error writing string to file: \(error.localizedDescription)")
+    }
+}
+
+func trytodelete(_ columns:[String]){
+  let colnames = q20kshare_csvcols.components(separatedBy: ",")
+  guard
+    let idxid = colnames.firstIndex(where: {$0=="ID"}),
+    let questiondf = colnames.firstIndex(where: {$0=="Question"})
+  else {
+    print ("columns screwup in tryto delete")
+    return
+  }
+  
+  let id = columns[idxid].trimmingCharacters(in: .whitespacesAndNewlines)
+  let question = columns[questiondf].trimmingCharacters(in: .whitespacesAndNewlines)
+  
+  let fileManager = FileManager.default
+  do {
+    try fileManager.removeItem(atPath: id)
+    print("Deleted \(question)")
+    deleted+=1
+  } catch let error as NSError {
+    print("Couldn't delete: \(question)\n\(error.localizedDescription)")
+  }
+}
+//"DELETEFLAG,Question,Correct,Topic,Model,Hint,Ans-1,Ans-2,Ans-3,Ans-4,Explanation,ID"
+
+func trytoreplace(_ columns:[String]){
+  let colnames = q20kshare_csvcols.components(separatedBy: ",")
+  guard
+    let idxid = colnames.firstIndex(where: {$0=="ID"}),
+    let idxq = colnames.firstIndex(where: {$0=="Question"}),
+    let idxc = colnames.firstIndex(where: {$0=="Correct"}),
+    //let idxm = colnames.firstIndex(where: {$0=="Model"}),
+    let idxh = colnames.firstIndex(where: {$0=="Hint"}),
+    let idx1 = colnames.firstIndex(where: {$0=="Ans-1"}),
+    let idx2 = colnames.firstIndex(where: {$0=="Ans-2"}),
+    let idx3 = colnames.firstIndex(where: {$0=="Ans-3"}),
+    let idx4 = colnames.firstIndex(where: {$0=="Ans-4"}),
+    let idxe = colnames.firstIndex(where: {$0=="Explanation"})
+  else {
+    print ("columns screwup in tryto replace")
+    return
+  }
+  
+  let id = columns[idxid].trimmingCharacters(in: .whitespacesAndNewlines)
+  let question = columns[idxq].trimmingCharacters(in: .whitespacesAndNewlines)
+  let correct = columns[idxc].trimmingCharacters(in: .whitespacesAndNewlines)
+  //let model = columns[idxm].trimmingCharacters(in: .whitespacesAndNewlines)
+  let hint = columns[idxh].trimmingCharacters(in: .whitespacesAndNewlines)
+  let ans1 = columns[idx1].trimmingCharacters(in: .whitespacesAndNewlines)
+  let ans2 = columns[idx2].trimmingCharacters(in: .whitespacesAndNewlines)
+  let ans3 = columns[idx3].trimmingCharacters(in: .whitespacesAndNewlines)
+  let ans4 = columns[idx4].trimmingCharacters(in: .whitespacesAndNewlines)
+  let explanation = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
+  
+  // read original file using the ID field which is really
+
+  let fileManager = FileManager.default
+  do {
+    guard let contents =  fileManager.contents(atPath: id),
+          let challenge = try? JSONDecoder().decode(Challenge.self,from:contents)
+    else {
+      print("Cannot decode item at \(id)")
+      return
+    }
+    
+    let originalid = challenge.id
+    let originaltopic = challenge.topic
+    let orginalaisource = challenge.aisource
+    
+    // make  new challenge and rewrite to filesystem
+    
+    let newchallenge = Challenge(question: question, topic: originaltopic, hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: explanation, id: originalid, date: Date(), aisource: orginalaisource)
+    
+    if let data = try? JSONEncoder().encode(newchallenge){
+      print("replacing contents at path " + id)
+      print("revised question is \(question)")
+      writeDataToFile(data: data, filePath: id)
+    }
+    replaced += 1
+  }
+}
+
+func process_incoming_csv() {
+  print(">Decomposing \(incsv)")
+  let colnames = q20kshare_csvcols.components(separatedBy: ",")
+  print(colnames)
+  guard
+    //let idxid = colnames.firstIndex(where: {$0=="ID"}),
+    let idxdf = colnames.firstIndex(where: {$0=="DELETEFLAG"})
+    //let questiondf = colnames.firstIndex(where: {$0=="Question"})
+  else
+  {
+    fatalError("internal column screwup")
+  }
+  var rownum = 0
+  let fileURL = URL(fileURLWithPath: outcsv)
+  do {
+    // Read File Content
+    let fileContentData = try String(contentsOf: fileURL)
+    let fileContent = fileContentData.components(separatedBy: "\n")
+    
+    // Remove CSV header
+    let rows = Array(fileContent.dropFirst())
+    
+    for row in rows {
+      rownum += 1
+      // Separate elements in the row
+      let columns = row.components(separatedBy: ",")
+      
+      // Check for column 9 and column 10
+      if columns.count > colnames.count {
+        print (">Warning: Row \(rownum) Wrong column count \(columns.count) vs \(colnames.count), probably missing extra DELETEFLAG column")
+        continue
+      }
+      if columns.count < colnames.count {
+        continue
+      }
+      
+      let df = columns[idxdf].trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+      
+      if df != "" {
+        print (df)
+      }
+      switch df {
+        
+      case "replaceflag" :
+        trytoreplace(columns)
+        
+      case "deleteflag"   :
+        trytodelete(columns)
+        
+      default: break
+      }
+    }
+  } catch {
+    print(">File reading error: \(error.localizedDescription)")
+  }
+  print(">Processed: \(rownum), Replaced: \(replaced) Moved: \(deleted) Challenges to Purgatory")
+}
 func normalize(_ str: String) -> String {
 
     // Trim and squeeze out unnecessary spaces and tabs
@@ -151,13 +307,8 @@ func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],t
     print("\(mergedData.count - dedupedData.count) duplicates removed")
   }
 
-  
-  
   // now produce a topic manifest
-  struct GroupTopicCounts {
-    var topic:String
-    var count:Int
-  }
+
   var lasttopic = ""
   var topicitems = 0
   var groupTopicCounts:[GroupTopicCounts] = []
@@ -188,7 +339,9 @@ func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],t
     var subj = $0.topic
     
     for td in topicData.topics {
-      if $0.topic == td.name {subj = td.subject; pic = td.pic ; notes = td.notes; subtopics = td.subtopics; break}
+      if $0.topic == td.name {
+        subj = td.subject; pic = td.pic ; notes = td.notes; subtopics = td.subtopics; break
+      }
     }
     return Topic(name: $0.topic, subject: subj, pic:pic,   notes: notes,subtopics: subtopics)
   }
@@ -265,9 +418,11 @@ struct Xpando: ParsableCommand {
   @Option(name: .shortAndLong, help: "The name of the topics data file .")
   var tdPath: String = "TopicData.json"
   @Option(name: .shortAndLong, help: "The name of the ios output file.")
-  var iosFile: String = "readyforiosx.json"
+  var mobileFile: String = "readyforiosx.json"
   @Option(name: .shortAndLong, help: "The name of the csv output file.")
-  var csvFile: String = "flattened.csv"
+  var outCSVFile: String = "flattened.csv"
+  @Option(name: .shortAndLong, help: "Input CSV file path")
+  var inputCSVFile: String
   
     var processed = 0
     var included = 0
@@ -275,15 +430,22 @@ struct Xpando: ParsableCommand {
   
     mutating func run() throws {
       let decoder = JSONDecoder()
+      outcsv = outCSVFile
+      incsv = inputCSVFile
       print("Xpando version \(Self.configuration.version)")
       let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
       print(">Processing: ",directoryPaths.joined(separator:","))
       print(">Filters: ",allfilters.joined(separator: ","))
       var fullPaths:[String] = []
-      
       let topicData = try fetchTopicData(tdPath)
       // now build a dictionary marrying subtopics to their main topic
       let subTopicTree = buildSubtopics(topicData)
+      // process incoming csv if we have one
+      
+      process_incoming_csv()
+      
+      
+      //walk thru all the files in the directorypaths
       expand(dirPaths: directoryPaths) { fullpath ,filename in
         if !fullpath.hasPrefix(".") {
           processed += 1
@@ -345,20 +507,20 @@ struct Xpando: ParsableCommand {
         
         
         // produce CSV file for numbers, excel
-        if csvFile != "" {
-          try csv_essence(challenges:allQuestions, outputCSVFile: csvFile, fullpaths:fullPaths, subtopics: subTopicTree)
+        if outCSVFile != "" {
+          try csv_essence(challenges:allQuestions, outputCSVFile: outCSVFile, fullpaths:fullPaths, subtopics: subTopicTree)
         }
         // now blend for ios
-        if iosFile != "" {
+        if mobileFile != "" {
           let playdata = try blend(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )
           // write the deduped data
           let encoder = JSONEncoder()
           encoder.outputFormatting = .prettyPrinted
           do {
             let outputData = try encoder.encode(playdata)
-            let outurl = URL(fileURLWithPath: iosFile)
+            let outurl = URL(fileURLWithPath: mobileFile)
             try? outputData.write(to: outurl)
-            print("Data files merged successfully - \(allQuestions.count) saved to \(iosFile)")
+            print("Data files merged successfully - \(allQuestions.count) saved to \(mobileFile)")
           }
           catch {
             print("Encoding error: \(error)")
