@@ -1,5 +1,8 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.2.8 improves and repairs normalization
+
+
 version 0.2.7 runs purgatoried within
   - one new argument specifies input csvfile with lines to replace and delete items
   - flags are now "-m" for readyforios1, "-i" for inputcsvfile "-o" for outputfile
@@ -16,25 +19,31 @@ version 0.2.5 normalize topic names:
 - capitalize the first letter of each word
 - trim and squeeze out unnecessary spaces and tabs
 
-## Takes Multiple Outputs from T9 and Bends Them Into IOS APP Format 
+## Takes Multiple Outputs from T9 and Converts Them Into CSV and IOS APP Format 
+- an auxillay file Topic-Info.Json supplies details of subtopics
+- subtopics from T9 are blended into full topics 
 
 ## Command Line
 
-
 ```
-OVERVIEW: Bender Builds The Files Needed By QANDA Mobile App
+OVERVIEW: XPANDO Builds The Files Needed By QANDA Mobile App and More
 
-USAGE: bender <json-files> ... [--output-file <output-file>] [--td-path <td-path>]
+USAGE: xpando <directory-paths> ... [--filter <filter>] [--quiet <quiet>] [--dedupe <dedupe>] [--td-path <td-path>] [--mobile-file <mobile-file>] [--output-csv-file <output-csv-file>] --input-csv-file <input-csv-file>
 
 ARGUMENTS:
-  <json-files>            The data files to be merged.
+  <directory-paths>       List of directory paths.
 
 OPTIONS:
-  -o, --output-file <output-file>
-                          The name of the output file. (default:
-                          merged_output.json)
-  -t, --td-path <td-path> The name of the topics data file . (default:
-                          TopicData.json)
+  --filter <filter>       filter string
+  --quiet <quiet>         quiet (default: false)
+  --dedupe <dedupe>       dedupe (default: true)
+  -t, --td-path <td-path> full path to the topics data file.
+  -m, --mobile-file <mobile-file>
+                          full path to the ios output file.
+  -o, --output-csv-file <output-csv-file>
+                          full path to the csv output file.
+  -i, --input-csv-file <input-csv-file>
+                          Input CSV file path
   --version               Show the version.
   -h, --help              Show help information.
 ```

@@ -18,13 +18,17 @@ var incsv:String = ""
 var replaced = 0
 var deleted = 0
 
+var processed = 0
+var included = 0
+var allQuestions:[Challenge] = []
+
 func writeDataToFile(data:Data, filePath: String) {
-    do {
-        // Write data to file
-        try data.write(to: URL(fileURLWithPath: filePath))
-    } catch {
-        print("Error writing string to file: \(error.localizedDescription)")
-    }
+  do {
+    // Write data to file
+    try data.write(to: URL(fileURLWithPath: filePath))
+  } catch {
+    print("Error writing string to file: \(error.localizedDescription)")
+  }
 }
 
 func trytodelete(_ columns:[String]){
@@ -81,7 +85,7 @@ func trytoreplace(_ columns:[String]){
   let explanation = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
   
   // read original file using the ID field which is really
-
+  
   let fileManager = FileManager.default
   do {
     guard let contents =  fileManager.contents(atPath: id),
@@ -115,7 +119,7 @@ func process_incoming_csv() {
   guard
     //let idxid = colnames.firstIndex(where: {$0=="ID"}),
     let idxdf = colnames.firstIndex(where: {$0=="DELETEFLAG"})
-    //let questiondf = colnames.firstIndex(where: {$0=="Question"})
+      //let questiondf = colnames.firstIndex(where: {$0=="Question"})
   else
   {
     fatalError("internal column screwup")
@@ -166,22 +170,45 @@ func process_incoming_csv() {
   print(">Processed: \(rownum), Replaced: \(replaced) Moved: \(deleted) Challenges to Purgatory")
 }
 func normalize(_ str: String) -> String {
+  
+  // Trim and squeeze out unnecessary spaces and tabs
+  var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
+  let components = result.components(separatedBy: .whitespacesAndNewlines)
+  result = components.filter { !$0.isEmpty }.joined(separator: " ")
+  
+  // Capitalize the first letter of each word
+  result = result.capitalized
+  
+  // Convert spaces and understores to underscores
+  result = result.replacingOccurrences(of: " ", with: "_")
+  
+  // Convert everything thats not alphanumeric (or underscore or quote) to dashes
+  result = result.replacingOccurrences(of: "[^a-zA-Z0-9_']+", with: "-", options: .regularExpression)
+  
+  return result
+}
 
-    // Trim and squeeze out unnecessary spaces and tabs
-    var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
-    let components = result.components(separatedBy: .whitespacesAndNewlines)
-    result = components.filter { !$0.isEmpty }.joined(separator: " ")
-
-    // Capitalize the first letter of each word
-    result = result.capitalized
-
-    // Convert spaces and understores to underscores
-    result = result.replacingOccurrences(of: " ", with: "_")
+func testNormalize() {
+  
+  
+  func test(_ s:String) {
+    let p = normalize(s)
+    print(p)
+    let url = URL.documentsDirectory.appending(path:p)
+    if FileManager.default.createFile(atPath:url.path, contents: nil, attributes: nil){
+    } else {
+      print("\(p) not created."); return
+    }
+    do{
+   
+      try FileManager.default.removeItem(at:url)
+    }
+    catch { print("\(p) not removed")}
     
-    // Convert everything thats not alphanumeric (or underscore or quote) to dashes
-    result = result.replacingOccurrences(of: "[^a-zA-Z0-9_']+", with: "-", options: .regularExpression)
-
-    return result
+  }
+  test("i like coffee")
+  test("I Don't Like Tea")
+  test ("PLANES, TRAINS, AND Automobiles")
 }
 
 extension Challenge:Comparable {
@@ -214,10 +241,10 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
 }
 
 func csv_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String],subtopics:[String:String]) throws {
-
+  
   if challenges == [] { print("No challenges in input"); return}
-
-  if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) { 
+  
+  if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) {
   } else {
     print("\(outputCSVFile) not created."); return
   }
@@ -232,31 +259,31 @@ func csv_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String
   try outputHandle.close()
   print(">Wrote \(linecount) lines to \(outputCSVFile)")
 }
-  
-  func fetchTopicData(_ tdurl:String ) throws -> TopicGroup {
-    // Load substitutions JSON file,throw out all of the metadata for now
-    let xdata = try Data(contentsOf: URL(fileURLWithPath: tdurl))
-    let decoded = try JSONDecoder().decode(TopicGroup.self, from:xdata)
-    // normalize the topic names
-    var newtops:[Topic]=[]
-    for topic in decoded.topics {
-      newtops.append(Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics))
-      }
-    let newTopicData:TopicGroup = TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops)
-    return newTopicData
+
+func fetchTopicData(_ tdurl:String ) throws -> TopicGroup {
+  // Load substitutions JSON file,throw out all of the metadata for now
+  let xdata = try Data(contentsOf: URL(fileURLWithPath: tdurl))
+  let decoded = try JSONDecoder().decode(TopicGroup.self, from:xdata)
+  // normalize the topic names
+  var newtops:[Topic]=[]
+  for topic in decoded.topics {
+    newtops.append(Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics))
   }
+  let newTopicData:TopicGroup = TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops)
+  return newTopicData
+}
 
 func buildSubtopics (_ topicData: TopicGroup) -> [String:String] {
   var subTopicTree : [String:String ] = [:]
   for topic in topicData.topics {// subtopics are optional
-   // print(topic,topic.subtopics)
-        for subtopic in topic.subtopics  {
-          if  let zzz = subTopicTree[normalize(subtopic)] {
-            print("Warning subtopic \(subtopic) is already in topic \(zzz) but you are trying to also add it to topic \(topic)")
-          } else {
-            // not in tree so add it
-            subTopicTree[normalize(subtopic)] = normalize(topic.name)
-          }
+    // print(topic,topic.subtopics)
+    for subtopic in topic.subtopics  {
+      if  let zzz = subTopicTree[normalize(subtopic)] {
+        print("Warning subtopic \(subtopic) is already in topic \(zzz) but you are trying to also add it to topic \(topic)")
+      } else {
+        // not in tree so add it
+        subTopicTree[normalize(subtopic)] = normalize(topic.name)
+      }
     }
   }
   // print the subtopic tree
@@ -306,9 +333,9 @@ func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],t
   if dedupedData.count != mergedData.count {
     print("\(mergedData.count - dedupedData.count) duplicates removed")
   }
-
+  
   // now produce a topic manifest
-
+  
   var lasttopic = ""
   var topicitems = 0
   var groupTopicCounts:[GroupTopicCounts] = []
@@ -345,10 +372,10 @@ func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],t
     }
     return Topic(name: $0.topic, subject: subj, pic:pic,   notes: notes,subtopics: subtopics)
   }
- 
+  
   let rewrittenTd = TopicGroup(description:topicData.description,version:topicData.version,
-                     author:topicData.author, date: "\(Date())",
-                     topics:topics)
+                               author:topicData.author, date: "\(Date())",
+                               topics:topics)
   
   var gamedatum: [GameData] = []
   for t in topics {
@@ -370,32 +397,48 @@ func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],t
     let gda = GameData(topic: t.name, challenges: challenges)
     gamedatum.append(gda)
   }
-
+  
   return PlayData(topicData:rewrittenTd,
-                          gameDatum: gamedatum,
-                          playDataId: UUID().uuidString,
-                          blendDate: Date() )
+                  gameDatum: gamedatum,
+                  playDataId: UUID().uuidString,
+                  blendDate: Date() )
 }
 func expand(dirPaths: [String], filterCallback: (String,String ) -> Bool) {
-    let fileManager = FileManager.default
-    
-    for dirPath in dirPaths {
-        guard let dirContents = try? fileManager.contentsOfDirectory(atPath: dirPath) else {
-            continue
-        }
-        let fullPaths = dirContents.map { "\($0)"} //{ dirPath.appending("/\($0)") }
-        let _ = fullPaths.filter { filterCallback(dirPath.appending("/\($0)") , $0) }
-
+  let fileManager = FileManager.default
+  
+  for dirPath in dirPaths {
+    guard let dirContents = try? fileManager.contentsOfDirectory(atPath: dirPath) else {
+      continue
     }
+    let fullPaths = dirContents.map { "\($0)"} //{ dirPath.appending("/\($0)") }
+    let _ = fullPaths.filter { filterCallback(dirPath.appending("/\($0)") , $0) }
+    
+  }
 }
 func contained(_ string: String, within: String) -> Bool {
-    return within.range(of: string, options: .caseInsensitive) != nil
+  return within.range(of: string, options: .caseInsensitive) != nil
 }
 
 func capitalized(_ x:Challenge) -> Challenge   {
   Challenge(question: x.question, topic: normalize(x.topic), hint: x.hint, answers: x.answers, correct: x.correct,
             explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
   
+}
+
+func deduplicate() ->Int {
+  var dupes = 0
+  allQuestions.sort()
+  var last : Challenge? = nil
+  for q in allQuestions  {
+    if let last = last  {
+      if last == q {
+        print (last.question,"with id:",last.id," has duplicate with id:",q.id)
+        dupes += 1
+      }
+    }
+    last = q
+  }
+  return dupes
 }
 struct Xpando: ParsableCommand {
   
@@ -406,7 +449,7 @@ struct Xpando: ParsableCommand {
     defaultSubcommand: nil,
     helpNames: [.long, .short]
   )
-
+  
   @Argument(help: "List of directory paths.")
   var directoryPaths: [String]
   @Option(help:"filter string")
@@ -415,119 +458,110 @@ struct Xpando: ParsableCommand {
   var quiet = false
   @Option(help:"dedupe")
   var dedupe = true
-  @Option(name: .shortAndLong, help: "The name of the topics data file .")
-  var tdPath: String = "TopicData.json"
-  @Option(name: .shortAndLong, help: "The name of the ios output file.")
-  var mobileFile: String = "readyforiosx.json"
-  @Option(name: .shortAndLong, help: "The name of the csv output file.")
-  var outCSVFile: String = "flattened.csv"
+  @Option(name: .shortAndLong, help: "full path to the topics data file.")
+  var tdPath: String = ""
+  @Option(name: .shortAndLong, help: "full path to the ios output file.")
+  var mobileFile: String = ""
+  @Option(name: .shortAndLong, help: "full path to the csv output file.")
+  var outputCSVFile: String = ""
   @Option(name: .shortAndLong, help: "Input CSV file path")
   var inputCSVFile: String
   
-    var processed = 0
-    var included = 0
-    var allQuestions:[Challenge] = []
   
-    mutating func run() throws {
-      let decoder = JSONDecoder()
-      outcsv = outCSVFile
-      incsv = inputCSVFile
-      print("Xpando version \(Self.configuration.version)")
-      let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
-      print(">Processing: ",directoryPaths.joined(separator:","))
-      print(">Filters: ",allfilters.joined(separator: ","))
-      var fullPaths:[String] = []
-      let topicData = try fetchTopicData(tdPath)
-      // now build a dictionary marrying subtopics to their main topic
-      let subTopicTree = buildSubtopics(topicData)
-      // process incoming csv if we have one
-      
-      process_incoming_csv()
-      
-      
-      //walk thru all the files in the directorypaths
-      expand(dirPaths: directoryPaths) { fullpath ,filename in
-        if !fullpath.hasPrefix(".") {
-          processed += 1
-          fullPaths.append(fullpath)
-          // Your filter condition goes here
-          // apply the filename filter
-          var include = false
-          if allfilters.count == 0 {
-            include = true
-          } else {
-            for thefilter in allfilters {
-              if contained(thefilter,within: filename) {
-                include = true ; break
-              }
+  
+  mutating func run() throws {
+//    while true {
+//      testNormalize()
+//      sleep(3)
+//    }
+    let decoder = JSONDecoder()
+    outcsv = outputCSVFile
+    incsv = inputCSVFile
+    print("Xpando version \(Self.configuration.version)")
+    let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
+    print(">Processing: ",directoryPaths.joined(separator:","))
+    print(">Filters: ",allfilters.joined(separator: ","))
+    var fullPaths:[String] = []
+    let topicData = try fetchTopicData(tdPath)
+    // now build a dictionary marrying subtopics to their main topic
+    let subTopicTree = buildSubtopics(topicData)
+    // process incoming csv if we have one
+    
+    process_incoming_csv()
+    
+    
+    //walk thru all the files in the directorypaths
+    expand(dirPaths: directoryPaths) { fullpath ,filename in
+      if !fullpath.hasPrefix(".") {
+        processed += 1
+        fullPaths.append(fullpath)
+        // Your filter condition goes here
+        // apply the filename filter
+        var include = false
+        if allfilters.count == 0 {
+          include = true
+        } else {
+          for thefilter in allfilters {
+            if contained(thefilter,within: filename) {
+              include = true ; break
             }
           }
-          if include  {
-            included += 1
-            if dedupe {
-              // open the file to get to the actual challenge
-              if let data = try? Data(contentsOf: URL(fileURLWithPath: fullpath)) {
-                if let challenge = try? decoder.decode(Challenge.self,from:data) {
-                  if !quiet {
-                    print (challenge.question, ",",challenge.id)
-                  }
-                  // fix topic capitalization issues
-                  let t = capitalized(challenge)
-                  allQuestions.append(t)
+        }
+        if include  {
+          included += 1
+          if dedupe {
+            // open the file to get to the actual challenge
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: fullpath)) {
+              if let challenge = try? decoder.decode(Challenge.self,from:data) {
+                if !quiet {
+                  print (challenge.question, ",",challenge.id)
                 }
-              }
-            } else {
-              // not deduping
-              if !quiet {
-                print (">selected: " + fullpath)
+                // fix topic capitalization issues
+                let t = capitalized(challenge)
+                allQuestions.append(t)
               }
             }
+          } else {
+            // not deduping
+            if !quiet {
+              print (">selected: " + fullpath)
+            }
           }
-          return include
         }
-        return false
+        return include
       }
-      print(">Filter string: \(filter) selected \(included) of \(processed)")
-      
-      
-      if dedupe {
-        var dupes = 0
-        allQuestions.sort()
-        var last : Challenge? = nil
-        for q in allQuestions  {
-          if let last = last  {
-            if last == q {
-              print (last.question,"with id:",last.id," has duplicate with id:",q.id)
-              dupes += 1
-            }
-          }
-          last = q
-        }
-        print(">Exact Duplicates detected: \(dupes)")
-        
-        
-        // produce CSV file for numbers, excel
-        if outCSVFile != "" {
-          try csv_essence(challenges:allQuestions, outputCSVFile: outCSVFile, fullpaths:fullPaths, subtopics: subTopicTree)
-        }
-        // now blend for ios
-        if mobileFile != "" {
-          let playdata = try blend(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )
-          // write the deduped data
-          let encoder = JSONEncoder()
-          encoder.outputFormatting = .prettyPrinted
-          do {
-            let outputData = try encoder.encode(playdata)
-            let outurl = URL(fileURLWithPath: mobileFile)
-            try? outputData.write(to: outurl)
-            print("Data files merged successfully - \(allQuestions.count) saved to \(mobileFile)")
-          }
-          catch {
-            print("Encoding error: \(error)")
-          }
-        }
+      return false
+    }
+    print(">Filter string: \(filter) selected \(included) of \(processed)")
+    
+    
+    if dedupe {
+      let  dupes = deduplicate()
+      print(">Exact Duplicates detected: \(dupes)")
+    }
+    
+    
+    // produce CSV file for numbers, excel
+    if outputCSVFile != "" {
+      try csv_essence(challenges:allQuestions, outputCSVFile: outputCSVFile, fullpaths:fullPaths, subtopics: subTopicTree)
+    }
+    // now blend for ios
+    if mobileFile != "" {
+      let playdata = try blend(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )
+      // write the deduped data
+      let encoder = JSONEncoder()
+      encoder.outputFormatting = .prettyPrinted
+      do {
+        let outputData = try encoder.encode(playdata)
+        let outurl = URL(fileURLWithPath: mobileFile)
+        try? outputData.write(to: outurl)
+        print("Data files merged successfully - \(allQuestions.count) saved to \(mobileFile)")
+      }
+      catch {
+        print("Encoding error: \(error)")
       }
     }
+  }
 }
 
 Xpando.main()
