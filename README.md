@@ -1,5 +1,8 @@
 #  XPANDO - make ReadyForIOS1
 
+
+version 0.2.9 fixes problem with hidden files appearing in the scan
+
 version 0.2.8 improves and repairs normalization
 
 

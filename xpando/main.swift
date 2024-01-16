@@ -410,7 +410,7 @@ func expand(dirPaths: [String], filterCallback: (String,String ) -> Bool) {
     guard let dirContents = try? fileManager.contentsOfDirectory(atPath: dirPath) else {
       continue
     }
-    let fullPaths = dirContents.map { "\($0)"} //{ dirPath.appending("/\($0)") }
+    let fullPaths = dirContents.compactMap  {!$0.hasPrefix(".") ? "\($0)" : nil}
     let _ = fullPaths.filter { filterCallback(dirPath.appending("/\($0)") , $0) }
     
   }
@@ -444,7 +444,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.2.7",
+    version: "0.2.9",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
