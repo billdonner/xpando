@@ -1,5 +1,6 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.0 ensures output in both json and csv is sorted by date
 
 version 0.2.9 fixes problem with hidden files appearing in the scan
 

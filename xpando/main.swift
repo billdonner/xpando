@@ -251,7 +251,12 @@ func csv_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String
   let outputHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputCSVFile))
   outputHandle.write(headerCSV().data(using:.utf8)!)
   var linecount = 0
-  for challenge in challenges {
+  for challenge in challenges.sorted(by:{    if $0.date < $1.date { return true }
+    else if $0.date > $1.date { return false }
+    else { // equal id
+      return $0.topic < $1.topic
+    }}
+    ) {
     let x = onelineCSV(from:challenge,atPath:fullpaths[linecount],subtopics:subtopics)
     outputHandle.write(x.data(using: .utf8)!)
     linecount += 1
@@ -324,10 +329,10 @@ func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],t
   
   // now sort by topic and time
   dedupedData.sort(by:) {
-    if $0.topic < $1.topic { return true }
-    else if $0.topic > $1.topic { return false }
+    if $0.date < $1.date { return true }
+    else if $0.date > $1.date { return false }
     else { // equal id
-      return $0.date < $1.date
+      return $0.topic < $1.topic
     }
   }
   if dedupedData.count != mergedData.count {
@@ -443,8 +448,8 @@ func deduplicate() ->Int {
 struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
-    abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and More",
-    version: "0.2.9",
+    abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV",
+    version: "0.3.0",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
