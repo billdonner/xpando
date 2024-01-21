@@ -10,6 +10,10 @@
 		88570D7D2B45CFB900428C14 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88570D7C2B45CFB900428C14 /* main.swift */; };
 		88570D852B45D01800428C14 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 88570D842B45D01800428C14 /* ArgumentParser */; };
 		88570D882B46021700428C14 /* q20kshare in Frameworks */ = {isa = PBXBuildFile; productRef = 88570D872B46021700428C14 /* q20kshare */; };
+		888B84C12B5D743C0055D71F /* csvhandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C02B5D743C0055D71F /* csvhandling.swift */; };
+		888B84C32B5D74AE0055D71F /* ioshandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C22B5D74AE0055D71F /* ioshandling.swift */; };
+		888B84C52B5D757F0055D71F /* sublib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C42B5D757F0055D71F /* sublib.swift */; };
+		888B84C72B5D76510055D71F /* topichandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C62B5D76510055D71F /* topichandling.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +33,10 @@
 		88570D7C2B45CFB900428C14 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		88570D892B462E6E00428C14 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		88796AEA2B54499D00D24FA7 /* pumpusr.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = pumpusr.txt; path = ../../../../fs/pumpusr.txt; sourceTree = "<group>"; };
+		888B84C02B5D743C0055D71F /* csvhandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = csvhandling.swift; sourceTree = "<group>"; };
+		888B84C22B5D74AE0055D71F /* ioshandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ioshandling.swift; sourceTree = "<group>"; };
+		888B84C42B5D757F0055D71F /* sublib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sublib.swift; sourceTree = "<group>"; };
+		888B84C62B5D76510055D71F /* topichandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = topichandling.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +73,10 @@
 			isa = PBXGroup;
 			children = (
 				88570D7C2B45CFB900428C14 /* main.swift */,
+				888B84C62B5D76510055D71F /* topichandling.swift */,
+				888B84C42B5D757F0055D71F /* sublib.swift */,
+				888B84C02B5D743C0055D71F /* csvhandling.swift */,
+				888B84C22B5D74AE0055D71F /* ioshandling.swift */,
 				88796AEA2B54499D00D24FA7 /* pumpusr.txt */,
 			);
 			path = xpando;
@@ -136,7 +148,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				888B84C72B5D76510055D71F /* topichandling.swift in Sources */,
+				888B84C52B5D757F0055D71F /* sublib.swift in Sources */,
+				888B84C32B5D74AE0055D71F /* ioshandling.swift in Sources */,
 				88570D7D2B45CFB900428C14 /* main.swift in Sources */,
+				888B84C12B5D743C0055D71F /* csvhandling.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
