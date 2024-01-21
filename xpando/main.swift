@@ -12,6 +12,7 @@ import q20kshare
 let dateFormatter = DateFormatter()
 let csvcols = "Op,Question,Correct,Hint,Explanation,Topic ,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
 
+typealias Path = String
 
 struct GroupTopicCounts {
   var topic:String
@@ -25,23 +26,35 @@ var deleted = 0
 
 var processed = 0
 var included = 0
-var allQuestions:[Challenge] = []
+var allQuestions:[(Challenge,Path)] = []
 
 
 
-
+// not really eliminating dupes, just counting
 func deduplicate() ->Int {
   var dupes = 0
-  allQuestions.sort()
+  allQuestions.sort(by:) {
+    let (c0,p0) = $0
+    let (c1,p1) = $1
+    if c0.id < c1.id {
+      return true
+    } else
+      if c0.id > c1.id {
+        return false
+      }
+    else {
+      return p0 <= p1
+    }
+  }
   var last : Challenge? = nil
   for q in allQuestions  {
     if let last = last  {
-      if last == q {
-        print (last.question,"with id:",last.id," has duplicate with id:",q.id)
+      if last == q.0 {
+        print (last.question,"with id:",last.id," has duplicate with id:",q.0.id)
         dupes += 1
       }
     }
-    last = q
+    last = q.0
   }
   return dupes
 }
@@ -49,7 +62,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV",
-    version: "0.3.1",
+    version: "0.3.2",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -124,7 +137,7 @@ struct Xpando: ParsableCommand {
                   if !quiet {
                     print (challenge.question, ",",challenge.id)
                   } 
-                  allQuestions.append(capitalized(challenge))   // fix topic capitalization issues
+                  allQuestions.append((capitalized(challenge),fullpath))   // fix topic capitalization issues
                 }
               }
             } else {
@@ -151,7 +164,7 @@ struct Xpando: ParsableCommand {
     
     // produce CSV file for numbers, excel
     if outputCSVFile != "" {
-      try csv_essence(challenges:allQuestions, outputCSVFile: outputCSVFile, fullpaths:fullPaths, subtopics: subTopicTree)
+      try csv_essence(challenges:allQuestions, outputCSVFile: outputCSVFile, subtopics: subTopicTree)
     }
     // now blend for ios
     if mobileFile != "" {

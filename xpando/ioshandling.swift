@@ -8,20 +8,21 @@
 import Foundation
 import q20kshare
 
-func blend(_ mergedData:[Challenge],tdPath:String,subTopicTree:[String:String],topicData:TopicGroup) throws -> PlayData {
+func blend(_ mergedData:[(Challenge,Path)],tdPath:String,subTopicTree:[String:String],topicData:TopicGroup) throws -> PlayData {
   
   var dedupedData: [Challenge] = []
   // dedupe phase I = sort by ID then by reverse time
   let x = mergedData.sorted(by:) {
-    if $0.id < $1.id { return true }
-    else if $0.id > $1.id { return false }
+    if $0.0.id < $1.0.id { return true }
+    else if $0.0.id > $1.0.id { return false }
     else { // equal id
-      return $0.date > $1.date
+      return $0.0.date > $1.0.date
     }
   }
   var lastid = ""
   // dont copy if same as last id
-  for challenge in x {
+  for chall in x {
+    let challenge = chall.0
     if challenge.id != lastid {
       //modify the challenge so it uses subtopics if e have one
       if let zz = subTopicTree[challenge.topic] {

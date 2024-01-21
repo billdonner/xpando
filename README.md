@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.2 fix path bug
+
 version 0.3.1 reorder csv fileds, include date, allow input csv to be missing
 
 version 0.3.0 ensures output in both json and csv is sorted by date

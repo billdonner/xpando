@@ -30,9 +30,9 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
   return line + "\n" // need to separate
 }
 
-func csv_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String],subtopics:[String:String]) throws {
+func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
   
-  if challenges == [] { print("No challenges in input"); return}
+  if challenges.count == 0 { print("No challenges in input"); return}
   
   if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) {
   } else {
@@ -41,13 +41,13 @@ func csv_essence( challenges:[Challenge],outputCSVFile: String,fullpaths:[String
   let outputHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputCSVFile))
   outputHandle.write(headerCSV().data(using:.utf8)!)
   var linecount = 0
-  for challenge in challenges.sorted(by:{    if $0.date < $1.date { return true }
-    else if $0.date > $1.date { return false }
+  for challenge in challenges.sorted(by:{    if $0.0.date < $1.0.date { return true }
+    else if $0.0.date > $1.0.date { return false }
     else { // equal id
-      return $0.topic < $1.topic
+      return $0.0.topic < $1.0.topic
     }}
     ) {
-    let x = onelineCSV(from:challenge,atPath:fullpaths[linecount],subtopics:subtopics)
+    let x = onelineCSV(from:challenge.0,atPath:challenge.1,subtopics:subtopics)
     outputHandle.write(x.data(using: .utf8)!)
     linecount += 1
   }
@@ -92,16 +92,10 @@ func process_incoming_csv() {
       }
       
       let df = columns[idxdf].trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-      
-      if df != "" {
-        print (df)
-      }
       let op:String  = df.first?.uppercased() ?? ""
       switch op {
-        
       case "R" :
-        trytoreplace(columns)
-        
+        trytoreplace(columns) 
       case "D"   :
         trytodelete(columns)
         
@@ -149,8 +143,7 @@ func trytoreplace(_ columns:[String]){
     let idx2 = colnames.firstIndex(where: {$0=="Ans-2"}),
     let idx3 = colnames.firstIndex(where: {$0=="Ans-3"}),
     let idx4 = colnames.firstIndex(where: {$0=="Ans-4"}),
-    let idxe = colnames.firstIndex(where: {$0=="Explanation"}),
-    let idxd = colnames.firstIndex(where: {$0=="Date"})
+    let idxe = colnames.firstIndex(where: {$0=="Explanation"})
   else {
     print ("columns screwup in tryto replace")
     return
