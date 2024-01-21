@@ -29,35 +29,6 @@ var included = 0
 var allQuestions:[(Challenge,Path)] = []
 
 
-
-// not really eliminating dupes, just counting
-func deduplicate() ->Int {
-  var dupes = 0
-  allQuestions.sort(by:) {
-    let (c0,p0) = $0
-    let (c1,p1) = $1
-    if c0.id < c1.id {
-      return true
-    } else
-      if c0.id > c1.id {
-        return false
-      }
-    else {
-      return p0 <= p1
-    }
-  }
-  var last : Challenge? = nil
-  for q in allQuestions  {
-    if let last = last  {
-      if last == q.0 {
-        print (last.question,"with id:",last.id," has duplicate with id:",q.0.id)
-        dupes += 1
-      }
-    }
-    last = q.0
-  }
-  return dupes
-}
 struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
@@ -151,7 +122,6 @@ struct Xpando: ParsableCommand {
         }
         return false
       }
-      
     }
     print(">Filter string: \(filter) selected \(included) of \(processed)")
     
@@ -166,6 +136,7 @@ struct Xpando: ParsableCommand {
     if outputCSVFile != "" {
       try csv_essence(challenges:allQuestions, outputCSVFile: outputCSVFile, subtopics: subTopicTree)
     }
+    
     // now blend for ios
     if mobileFile != "" {
       let playdata = try blend(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )

@@ -125,3 +125,33 @@ func capitalized(_ x:Challenge) -> Challenge   {
             explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
   
 }
+
+
+// not really eliminating dupes, just counting
+func deduplicate() ->Int {
+  var dupes = 0
+  allQuestions.sort(by:) {
+    let (c0,p0) = $0
+    let (c1,p1) = $1
+    if c0.id < c1.id {
+      return true
+    } else
+      if c0.id > c1.id {
+        return false
+      }
+    else {
+      return p0 <= p1
+    }
+  }
+  var last : Challenge? = nil
+  for q in allQuestions  {
+    if let last = last  {
+      if last == q.0 {
+        print (last.question,"with id:",last.id," has duplicate with id:",q.0.id)
+        dupes += 1
+      }
+    }
+    last = q.0
+  }
+  return dupes
+}

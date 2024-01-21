@@ -32,7 +32,6 @@
 		88570D792B45CFB900428C14 /* xpando */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = xpando; sourceTree = BUILT_PRODUCTS_DIR; };
 		88570D7C2B45CFB900428C14 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		88570D892B462E6E00428C14 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		88796AEA2B54499D00D24FA7 /* pumpusr.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = pumpusr.txt; path = ../../../../fs/pumpusr.txt; sourceTree = "<group>"; };
 		888B84C02B5D743C0055D71F /* csvhandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = csvhandling.swift; sourceTree = "<group>"; };
 		888B84C22B5D74AE0055D71F /* ioshandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ioshandling.swift; sourceTree = "<group>"; };
 		888B84C42B5D757F0055D71F /* sublib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sublib.swift; sourceTree = "<group>"; };
@@ -77,7 +76,6 @@
 				888B84C42B5D757F0055D71F /* sublib.swift */,
 				888B84C02B5D743C0055D71F /* csvhandling.swift */,
 				888B84C22B5D74AE0055D71F /* ioshandling.swift */,
-				88796AEA2B54499D00D24FA7 /* pumpusr.txt */,
 			);
 			path = xpando;
 			sourceTree = "<group>";
