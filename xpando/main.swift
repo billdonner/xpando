@@ -12,12 +12,7 @@ import q20kshare
 let dateFormatter = DateFormatter()
 let csvcols = "Op,Question,Correct,Hint,Explanation,Topic ,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
 
-typealias Path = String
 
-struct GroupTopicCounts {
-  var topic:String
-  var count:Int
-}
 
 var outcsv:String = ""
 var incsv:String = ""
@@ -33,7 +28,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV",
-    version: "0.3.2",
+    version: "0.3.3",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -55,13 +50,9 @@ struct Xpando: ParsableCommand {
   var outputCSVFile: String = ""
   @Option(name: .shortAndLong, help: "Input CSV file path")
   var inputCSVFile: String = ""
-  
-  
-  
+
   mutating func run() throws {
- 
     let decoder = JSONDecoder()
-    
     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS" // "SS" is for hundredths of a second
     
@@ -73,8 +64,8 @@ struct Xpando: ParsableCommand {
     let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
     print(">Processing: ",directoryPaths.joined(separator:","))
     print(">Filters: ",allfilters.joined(separator: ","))
-    var fullPaths:[String] = []
     let topicData =   fetchTopicData(tdPath)
+    print(">Topics in topicData: \(topicData.topics.count)")
     // now build a dictionary marrying subtopics to their main topic
     let subTopicTree = buildSubtopics(topicData)
     // process incoming csv if we have one
@@ -86,7 +77,6 @@ struct Xpando: ParsableCommand {
       expand(dirPath: dp) { fullpath ,filename in
         if !fullpath.hasPrefix(".") {
           processed += 1
-          fullPaths.append(fullpath)
           // Your filter condition goes here
           // apply the filename filter
           var include = false
@@ -124,14 +114,12 @@ struct Xpando: ParsableCommand {
       }
     }
     print(">Filter string: \(filter) selected \(included) of \(processed)")
-    
-    
+
     if dedupe {
       let  dupes = deduplicate()
       print(">Exact Duplicates detected: \(dupes)")
     }
-    
-    
+
     // produce CSV file for numbers, excel
     if outputCSVFile != "" {
       try csv_essence(challenges:allQuestions, outputCSVFile: outputCSVFile, subtopics: subTopicTree)
@@ -139,7 +127,7 @@ struct Xpando: ParsableCommand {
     
     // now blend for ios
     if mobileFile != "" {
-      let playdata = try blend(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )
+      let playdata = try iosBlender(allQuestions, tdPath: tdPath, subTopicTree: subTopicTree,topicData:topicData )
       // write the deduped data
       let encoder = JSONEncoder()
       encoder.outputFormatting = .prettyPrinted

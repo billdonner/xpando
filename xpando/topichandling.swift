@@ -18,7 +18,22 @@ func fetchTopicData(_ tdurl:String )   -> TopicGroup {
     for topic in decoded.topics {
       newtops.append(Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics))
     }
+    // sort the topicnames
+    
+    newtops.sort(by:){
+      $0.name < $1.name
+    }
+    // check for dupes
+    var lasttop = ""
+    for top in newtops {
+      if top.name == lasttop {
+        print("warning: topic \(top.name) is a duplicate")
+      }
+      lasttop = top.name
+    }
+    
     let newTopicData:TopicGroup = TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops)
+    print(">Fetched \(newtops.count) topics")
     return newTopicData
   }
   catch {

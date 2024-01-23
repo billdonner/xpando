@@ -58,7 +58,6 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
 func process_incoming_csv() {
   print(">Decomposing \(incsv)")
   let colnames =  csvcols.components(separatedBy: ",")
-  print(colnames)
   guard
     //let idxid = colnames.firstIndex(where: {$0=="ID"}),
     let idxdf = colnames.firstIndex(where: {$0=="Op"})
@@ -68,6 +67,7 @@ func process_incoming_csv() {
     fatalError("internal column screwup")
   }
   var rownum = 0
+  var processed = 0
   let fileURL = URL(fileURLWithPath: outcsv)
   do {
     // Read File Content
@@ -101,11 +101,12 @@ func process_incoming_csv() {
         
       default: break
       }
+      processed += 1
     }
   } catch {
     print(">File reading error: \(error.localizedDescription)")
   }
-  print(">Processed: \(rownum), Replaced: \(replaced) Moved: \(deleted) Challenges to Purgatory")
+  print(">Processed: \(processed), Replaced: \(replaced) Moved: \(deleted) Challenges to Purgatory")
 }
 
 func trytodelete(_ columns:[String]){

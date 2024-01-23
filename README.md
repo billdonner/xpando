@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.3 fix bug inserting multiple duplicate topics into readyforios
+
 version 0.3.2 fix path bug
 
 version 0.3.1 reorder csv fileds, include date, allow input csv to be missing

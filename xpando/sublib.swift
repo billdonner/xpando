@@ -8,6 +8,38 @@
 import Foundation
 import q20kshare
 
+typealias Path = String
+
+struct GroupTopicCounts {
+  var topic:String
+  var count:Int
+}
+
+
+extension Challenge:Comparable {
+  public static func < (lhs:  Challenge, rhs:  Challenge) -> Bool {
+    lhs.question < rhs.question
+  }
+}
+extension String {
+  var fixup : String {
+    return self.replacingOccurrences(of: ",", with: ";")
+  }
+}
+
+func contained(_ string: String, within: String) -> Bool {
+  return within.range(of: string, options: .caseInsensitive) != nil
+}
+
+func capitalized(_ x:Challenge) -> Challenge   {
+  Challenge(question: x.question, topic: normalize(x.topic), hint: x.hint, answers: x.answers, correct: x.correct,
+            explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
+  
+}
+
+func challengesFor(topic:String,ch:[Challenge]) -> [Challenge] {
+  ch.compactMap()  { $0.topic == topic ? $0:nil }
+}
 func writeDataToFile(data:Data, filePath: String) {
   do {
     // Write data to file
@@ -37,8 +69,6 @@ func normalize(_ str: String) -> String {
 }
 
 func testNormalize() {
-  
-  
   func test(_ s:String) {
     let p = normalize(s)
     print(p)
@@ -59,19 +89,9 @@ func testNormalize() {
   test ("PLANES, TRAINS, AND Automobiles")
 }
 
-extension Challenge:Comparable {
-  public static func < (lhs:  Challenge, rhs:  Challenge) -> Bool {
-    lhs.question < rhs.question
-  }
-}
-extension String {
-  var fixup : String {
-    return self.replacingOccurrences(of: ",", with: ";")
-  }
-}
+
 func expand2(dirPaths: [String], filterCallback: (String,String ) -> Bool) {
   let fileManager = FileManager.default
-  
   for dirPath in dirPaths {
     guard let dirContents = try? fileManager.contentsOfDirectory(atPath: dirPath) else {
       continue
@@ -115,16 +135,6 @@ func expand(dirPath: String, filterCallback: (String, String) -> Bool) {
 }
 
 
-
-func contained(_ string: String, within: String) -> Bool {
-  return within.range(of: string, options: .caseInsensitive) != nil
-}
-
-func capitalized(_ x:Challenge) -> Challenge   {
-  Challenge(question: x.question, topic: normalize(x.topic), hint: x.hint, answers: x.answers, correct: x.correct,
-            explanation: x.explanation, id: x.id, date: x.date,aisource: x.aisource)
-  
-}
 
 
 // not really eliminating dupes, just counting
