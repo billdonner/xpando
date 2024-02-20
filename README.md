@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.5 adds missing bundleid
+
 version 0.3.4 add notes field on left of spreadsheet for humans,remove explanation col
 
 version 0.3.3 fix bug inserting multiple duplicate topics into readyforios
