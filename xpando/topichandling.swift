@@ -14,9 +14,8 @@ func fetchTopicData(_ tdurl:String )   -> TopicGroup {
     let xdata = try Data(contentsOf: URL(fileURLWithPath: tdurl))
     let decoded = try JSONDecoder().decode(TopicGroup.self, from:xdata)
     // normalize the topic names
-    var newtops:[Topic]=[]
-    for topic in decoded.topics {
-      newtops.append(Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics))
+    var newtops:[Topic] =  decoded.topics.map{ topic in
+      Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics)
     }
     // sort the topicnames
     
@@ -31,10 +30,8 @@ func fetchTopicData(_ tdurl:String )   -> TopicGroup {
       }
       lasttop = top.name
     }
-    
-    let newTopicData:TopicGroup = TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops)
     print(">Fetched \(newtops.count) topics")
-    return newTopicData
+    return TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops) 
   }
   catch {
     print("Cant read \(tdurl), substituting")

@@ -56,7 +56,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/users/fs/cf"
+            argument = "/users/fs/carolv40"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -72,8 +72,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-t /users/fs/topics-info.json"
-            isEnabled = "NO">
+            argument = "-t /users/fs/topicinfo-test.json"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--filter &quot;The World Series&quot;"

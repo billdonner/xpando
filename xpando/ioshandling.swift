@@ -74,13 +74,7 @@ func iosBlender(_ mergedData:[(Challenge,Path)],tdPath:String,subTopicTree:[Stri
   }
   let xx = groupTopicCounts.reduce(0) { $0 + $1.count }
   print(">GroupTopic count \(groupTopicCounts.count)  challenges \(xx)")
- /*
-  print("+======TOPICS======+")
-  for e in groupTopicCounts {
-    print (" \(e.topic)   \(e.count)  ")
-  }
-  print("+==================+")
-  */
+
   
 
   
@@ -119,6 +113,14 @@ func iosBlender(_ mergedData:[(Challenge,Path)],tdPath:String,subTopicTree:[Stri
   }
   
   print(">IOS file contains \(topicscount) topics and \(challengecount) challenges  deduped \(dedupedData.count)")
+  
+  
+   print("+======TOPICS======+")
+   for e in groupTopicCounts {
+     print (" \(e.topic)   \(e.count)  ")
+   }
+   print("+==================+")
+  
   return PlayData(topicData:rewrittenTd,
                   gameDatum: gamedatum,
                   playDataId: UUID().uuidString,

@@ -10,7 +10,7 @@ import ArgumentParser
 import q20kshare
  
 let dateFormatter = DateFormatter()
-let csvcols = "Op,Question,Correct,Hint,Explanation,Topic ,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
+let csvcols = "Notes,Op,Question,Correct,Hint,Topic ,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
 
 
 
@@ -28,7 +28,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV",
-    version: "0.3.3",
+    version: "0.3.4",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
