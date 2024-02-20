@@ -38,9 +38,14 @@ version 0.2.5 normalize topic names:
 ## Command Line
 
 ```
-OVERVIEW: XPANDO Builds The Files Needed By QANDA Mobile App and More
+OVERVIEW: XPANDO Builds The Files Needed By QANDA Mobile App and CSV
 
-USAGE: xpando <directory-paths> ... [--filter <filter>] [--quiet <quiet>] [--dedupe <dedupe>] [--td-path <td-path>] [--mobile-file <mobile-file>] [--output-csv-file <output-csv-file>] --input-csv-file <input-csv-file>
+***Pay heed to the tdPath argument which is an optional json input file made by
+SubtopicMaker that controls mapping of topics into subtopics. 
+***Pay heed to the input-csv-file argument which is a json input which controls
+deletions and repairs of particular challenges.
+
+USAGE: xpando <directory-paths> ... [--filter <filter>] [--quiet <quiet>] [--dedupe <dedupe>] [--td-path <td-path>] [--mobile-file <mobile-file>] [--output-csv-file <output-csv-file>] [--input-csv-file <input-csv-file>]
 
 ARGUMENTS:
   <directory-paths>       List of directory paths.
@@ -49,7 +54,8 @@ OPTIONS:
   --filter <filter>       filter string
   --quiet <quiet>         quiet (default: false)
   --dedupe <dedupe>       dedupe (default: true)
-  -t, --td-path <td-path> full path to the topics data file.
+  -t, --td-path <td-path> full path to the topics data file.TURN THIS OFF IF
+                          YOU WANT TO PROCESS SUBTOPICS.
   -m, --mobile-file <mobile-file>
                           full path to the ios output file.
   -o, --output-csv-file <output-csv-file>

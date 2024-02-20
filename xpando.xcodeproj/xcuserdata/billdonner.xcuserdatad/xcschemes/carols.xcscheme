@@ -64,8 +64,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /users/fs/q20data.csv"
-            isEnabled = "NO">
+            argument = "-i /users/fs/q20data 3.csv"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o /users/fs/q20data.csv"

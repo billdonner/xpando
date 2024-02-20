@@ -27,7 +27,7 @@ var allQuestions:[(Challenge,Path)] = []
 struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
-    abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV",
+    abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV\n\n***Pay heed to the tdPath argument which is an optional json input file made by SubtopicMaker that controls mapping of topics into subtopics. \n***Pay heed to the input-csv-file argument which is a json input which controls deletions and repairs of particular challenges.",
     version: "0.3.4",
     subcommands: [],
     defaultSubcommand: nil,
@@ -42,7 +42,7 @@ struct Xpando: ParsableCommand {
   var quiet = false
   @Option(help:"dedupe")
   var dedupe = true
-  @Option(name: .shortAndLong, help: "full path to the topics data file.")
+  @Option(name: .shortAndLong, help: "full path to the topics data file.TURN THIS OFF IF YOU WANT TO PROCESS SUBTOPICS.")
   var tdPath: String = ""
   @Option(name: .shortAndLong, help: "full path to the ios output file.")
   var mobileFile: String = ""

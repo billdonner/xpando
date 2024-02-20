@@ -15,8 +15,9 @@ func headerCSV() -> String {
 
 func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> String {
   let topic = subtopics[c.topic] ?? c.topic
-  var line =  "," + c.question.fixup + "," + c.correct.fixup + ","  + c.hint.fixup + ","
-  + (c.explanation?.fixup ?? "")  +  "," +  normalize(topic).fixup + ","
+  var line = (c.notes?.fixup ?? "")+"," + "," + c.question.fixup
+          + "," + c.correct.fixup + ","  + c.hint.fixup + ","
+                + normalize(topic).fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -59,9 +60,8 @@ func process_incoming_csv() {
   print(">Decomposing \(incsv)")
   let colnames =  csvcols.components(separatedBy: ",")
   guard
-    //let idxid = colnames.firstIndex(where: {$0=="ID"}),
-    let idxdf = colnames.firstIndex(where: {$0=="Op"})
-      //let questiondf = colnames.firstIndex(where: {$0=="Question"})
+    let idxdf = colnames.firstIndex(where: {$0=="Op"}),
+   let  notesdf = colnames.firstIndex(where: {$0=="Notes"})
   else
   {
     fatalError("internal column screwup")
@@ -82,7 +82,7 @@ func process_incoming_csv() {
       // Separate elements in the row
       let columns = row.components(separatedBy: ",")
       
-      // Check for column 9 and column 10
+      // Check for valdity
       if columns.count > colnames.count {
         print (">Warning: Row \(rownum) Wrong column count \(columns.count) vs \(colnames.count), probably missing column")
         continue
@@ -90,7 +90,13 @@ func process_incoming_csv() {
       if columns.count < colnames.count {
         continue
       }
+      // Passthru the notes field if its not empty
+      let def = columns[notesdf].trimmingCharacters(in: .whitespacesAndNewlines)
+      if !def.isEmpty  {
+        trytoreplace(columns)
+      }
       
+      // Process any opcode the user may have entered
       let df = columns[idxdf].trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
       let op:String  = df.first?.uppercased() ?? ""
       switch op {
@@ -144,7 +150,7 @@ func trytoreplace(_ columns:[String]){
     let idx2 = colnames.firstIndex(where: {$0=="Ans-2"}),
     let idx3 = colnames.firstIndex(where: {$0=="Ans-3"}),
     let idx4 = colnames.firstIndex(where: {$0=="Ans-4"}),
-    let idxe = colnames.firstIndex(where: {$0=="Explanation"})
+    let idxe = colnames.firstIndex(where: {$0=="Notes"})
   else {
     print ("columns screwup in tryto replace")
     return
@@ -159,7 +165,7 @@ func trytoreplace(_ columns:[String]){
   let ans2 = columns[idx2].trimmingCharacters(in: .whitespacesAndNewlines)
   let ans3 = columns[idx3].trimmingCharacters(in: .whitespacesAndNewlines)
   let ans4 = columns[idx4].trimmingCharacters(in: .whitespacesAndNewlines)
-  let explanation = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
+  let notes = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
   
  // let date = columns[idxd].trimmingCharacters(in: .whitespacesAndNewlines)
   
@@ -180,7 +186,7 @@ func trytoreplace(_ columns:[String]){
     
     // make  new challenge and rewrite to filesystem
     
-    let newchallenge = Challenge(question: question, topic: originaltopic, hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: explanation, id: originalid, date: Date(), aisource: orginalaisource)
+    let newchallenge = Challenge(question: question, topic: originaltopic, hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: challenge.explanation, id: originalid, date: Date(), aisource: orginalaisource,notes:notes)
     
     if let data = try? JSONEncoder().encode(newchallenge){
       print("replacing contents at path " + path)
