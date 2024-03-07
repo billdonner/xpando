@@ -15,7 +15,7 @@ func fetchTopicData(_ tdurl:String )   -> TopicGroup {
     let decoded = try JSONDecoder().decode(TopicGroup.self, from:xdata)
     // normalize the topic names
     var newtops:[Topic] =  decoded.topics.map{ topic in
-      Topic(name:normalize(topic.name),subject:normalize(topic.subject),pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics)
+      Topic(name:normalize(topic.name),subject:topic.subject,pic:topic.pic,notes:topic.notes,subtopics: topic.subtopics)
     }
     // sort the topicnames
     

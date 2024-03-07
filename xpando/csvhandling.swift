@@ -8,10 +8,27 @@
 import Foundation
 import q20kshare
 
+extension String {
+  var fixup : String {
+        // Check if encoding is needed
+        if self.contains(",") || self.contains("\"") {
+            // Replace all instances of double quotes with two double quotes
+            let escapedQuotes = self.replacingOccurrences(of: "\"", with: "\"\"")
+            // Enclose the entire string in double quotes
+            return "\"\(escapedQuotes)\""
+        } else {
+            // No encoding needed
+            return self
+        }
+  }
+}
 
 func headerCSV() -> String {
   return csvcols + "\n"
 }
+
+
+
 
 func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> String {
   let topic = subtopics[c.topic] ?? c.topic
@@ -30,7 +47,47 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
   line +=  atPath + "," + pdate + ","  + c.aisource.fixup
   return line + "\n" // need to separate
 }
-
+func parseCSVLine(_ line: String) -> [String] {
+    // Resulting array
+    var fields: [String] = []
+    // Temporary field value
+    var currentField = ""
+    // Track if we're inside quotes
+    var insideQuotes = false
+    
+    // Iterate through each character in the line
+    var previousChar: Character = " " // Placeholder for checking previous character
+    for char in line {
+        switch char {
+        case "\"":
+            // If inside quotes, check if next is also a quote (escaped quote)
+            if insideQuotes, previousChar == "\"" {
+                currentField.removeLast() // Remove the added quote from before
+                currentField.append(char) // Add it as part of the value
+            }
+            insideQuotes.toggle()
+        case ",":
+            if insideQuotes {
+                // Comma is part of the value
+                currentField.append(char)
+            } else {
+                // Comma is a delimiter, add field to result and reset currentField
+                fields.append(currentField)
+                currentField = ""
+            }
+        default:
+            // Just a regular character, add it to the current field
+            currentField.append(char)
+        }
+        previousChar = char // Update previousChar at the end of the loop
+    }
+    
+    // Add the last field to the result, as it won't be added inside the loop
+    fields.append(currentField)
+    
+    // Return the parsed fields
+    return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+}
 func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
   
   if challenges.count == 0 { print("No challenges in input"); return}
@@ -80,16 +137,14 @@ func process_incoming_csv() {
     for row in rows {
       rownum += 1
       // Separate elements in the row
-      let columns = row.components(separatedBy: ",")
       
+      let columns = parseCSVLine(row)
       // Check for valdity
-      if columns.count > colnames.count {
+      if columns.count != colnames.count {
         print (">Warning: Row \(rownum) Wrong column count \(columns.count) vs \(colnames.count), probably missing column")
         continue
       }
-      if columns.count < colnames.count {
-        continue
-      }
+
       // Passthru the notes field if its not empty
       let def = columns[notesdf].trimmingCharacters(in: .whitespacesAndNewlines)
       if !def.isEmpty  {

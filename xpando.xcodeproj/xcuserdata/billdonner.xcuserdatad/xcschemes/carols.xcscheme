@@ -64,7 +64,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /users/fs/q20data 3.csv"
+            argument = "-i /users/fs/q20data.csv"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -74,10 +74,6 @@
          <CommandLineArgument
             argument = "-t /users/fs/topicinfo-test.json"
             isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--filter &quot;The World Series&quot;"
-            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--filter &quot;&quot;"

@@ -21,11 +21,7 @@ extension Challenge:Comparable {
     lhs.question < rhs.question
   }
 }
-extension String {
-  var fixup : String {
-    return self.replacingOccurrences(of: ",", with: ";")
-  }
-}
+
 
 func contained(_ string: String, within: String) -> Bool {
   return within.range(of: string, options: .caseInsensitive) != nil
@@ -50,22 +46,23 @@ func writeDataToFile(data:Data, filePath: String) {
 }
 
 func normalize(_ str: String) -> String {
+  return str
   
   // Trim and squeeze out unnecessary spaces and tabs
-  var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
-  let components = result.components(separatedBy: .whitespacesAndNewlines)
-  result = components.filter { !$0.isEmpty }.joined(separator: " ")
-  
-  // Capitalize the first letter of each word
-  result = result.capitalized
-  
-  // Convert spaces and understores to underscores
-  result = result.replacingOccurrences(of: " ", with: "_")
-  
-  // Convert everything thats not alphanumeric (or underscore or quote) to dashes
-  result = result.replacingOccurrences(of: "[^a-zA-Z0-9_']+", with: "-", options: .regularExpression)
-  
-  return result
+//  var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
+//  let components = result.components(separatedBy: .whitespacesAndNewlines)
+//  result = components.filter { !$0.isEmpty }.joined(separator: " ")
+//  
+//  // Capitalize the first letter of each word
+//  result = result.capitalized
+//  
+//  // Convert spaces and understores to underscores
+//  result = result.replacingOccurrences(of: " ", with: "_")
+//  
+//  // Convert everything thats not alphanumeric (or underscore or quote) to dashes
+//  result = result.replacingOccurrences(of: "[^a-zA-Z0-9_']+", with: "-", options: .regularExpression)
+//  
+//  return result
 }
 
 func testNormalize() {

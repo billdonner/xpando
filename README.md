@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.6 fixes csv output and allows better topic names
+
 version 0.3.5 adds missing bundleid
 
 version 0.3.4 add notes field on left of spreadsheet for humans,remove explanation col
