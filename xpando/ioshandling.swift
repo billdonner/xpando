@@ -26,12 +26,18 @@ func iosBlender(_ mergedData:[(Challenge,Path)],tdPath:String,subTopicTree:[Stri
   for chall in x {
     let challenge = chall.0
     if challenge.id != lastid {
+      var hint = challenge.hint
+      if !hint.hasSuffix(".") {
+        hint = hint + "."
+      }
       //modify the challenge so it uses subtopics if e have one
       if let zz = subTopicTree[challenge.topic] {
-        let modchallenge = Challenge(question: challenge.question, topic: zz, hint: challenge.hint, answers: challenge.answers, correct: challenge.correct, explanation: challenge.explanation, id: challenge.id, date: challenge.date, aisource: challenge.aisource)
+  
+        let modchallenge = Challenge(question: challenge.question, topic: zz, hint: hint, answers: challenge.answers, correct: challenge.correct, explanation: challenge.explanation, id: challenge.id, date: challenge.date, aisource: challenge.aisource)
         dedupedData.append(modchallenge)
       } else {
-        dedupedData.append(challenge)
+        let modchallenge = Challenge(question: challenge.question, topic: challenge.topic, hint: hint, answers: challenge.answers, correct: challenge.correct, explanation: challenge.explanation, id: challenge.id, date: challenge.date, aisource: challenge.aisource)
+        dedupedData.append(modchallenge)
       }
       lastid = challenge.id
     }

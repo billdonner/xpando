@@ -32,8 +32,13 @@ func headerCSV() -> String {
 
 func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> String {
   let topic = subtopics[c.topic] ?? c.topic
+  var hint = c.hint.fixup
+  if !hint.hasSuffix(".") { // if no period then add one 
+    hint = hint + "."
+  }
+
   var line = (c.notes?.fixup ?? "")+"," + "," + c.question.fixup
-          + "," + c.correct.fixup + ","  + c.hint.fixup + ","
+          + "," + c.correct.fixup + ","  + hint + ","
                 + normalize(topic).fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {

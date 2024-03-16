@@ -46,7 +46,7 @@ func writeDataToFile(data:Data, filePath: String) {
 }
 
 func normalize(_ str: String) -> String {
-  return str
+  return str.capitalized
   
   // Trim and squeeze out unnecessary spaces and tabs
 //  var result = str.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -1,5 +1,8 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.7 capitalize topic name regardless of chatgpt 
+              adds period to end of hint if not already present
+
 version 0.3.6 fixes csv output and allows better topic names
 
 version 0.3.5 adds missing bundleid
