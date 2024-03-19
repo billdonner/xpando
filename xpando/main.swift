@@ -12,8 +12,6 @@ import q20kshare
 let dateFormatter = DateFormatter()
 let csvcols = "Notes,Op,Question,Correct,Hint,Topic ,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
 
-
-
 var outcsv:String = ""
 var incsv:String = ""
 var replaced = 0

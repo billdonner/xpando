@@ -27,9 +27,6 @@ func headerCSV() -> String {
   return csvcols + "\n"
 }
 
-
-
-
 func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> String {
   let topic = subtopics[c.topic] ?? c.topic
   var hint = c.hint.fixup
@@ -204,7 +201,6 @@ func trytoreplace(_ columns:[String]){
     let idxid = colnames.firstIndex(where: {$0=="Path"}),
     let idxq = colnames.firstIndex(where: {$0=="Question"}),
     let idxc = colnames.firstIndex(where: {$0=="Correct"}),
-    //let idxm = colnames.firstIndex(where: {$0=="Model"}),
     let idxh = colnames.firstIndex(where: {$0=="Hint"}),
     let idx1 = colnames.firstIndex(where: {$0=="Ans-1"}),
     let idx2 = colnames.firstIndex(where: {$0=="Ans-2"}),
@@ -219,7 +215,6 @@ func trytoreplace(_ columns:[String]){
   let path = columns[idxid].trimmingCharacters(in: .whitespacesAndNewlines)
   let question = columns[idxq].trimmingCharacters(in: .whitespacesAndNewlines)
   let correct = columns[idxc].trimmingCharacters(in: .whitespacesAndNewlines)
-  //let model = columns[idxm].trimmingCharacters(in: .whitespacesAndNewlines)
   let hint = columns[idxh].trimmingCharacters(in: .whitespacesAndNewlines)
   let ans1 = columns[idx1].trimmingCharacters(in: .whitespacesAndNewlines)
   let ans2 = columns[idx2].trimmingCharacters(in: .whitespacesAndNewlines)
