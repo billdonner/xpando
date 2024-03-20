@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1520"
+   LastUpgradeVersion = "1530"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -56,7 +56,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/users/fs/db/v35"
+            argument = "/users/fs/db/v40"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -74,14 +74,6 @@
          <CommandLineArgument
             argument = "-t /users/fs/topics-info.json"
             isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--filter &quot;The World Series&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--filter &quot;&quot;"
-            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--quiet true"

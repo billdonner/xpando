@@ -19,7 +19,9 @@ var deleted = 0
 
 var processed = 0
 var included = 0
+
 var allQuestions:[(Challenge,Path)] = []
+var allNotes:[String:String] = [:]
 
 
 struct Xpando: ParsableCommand {

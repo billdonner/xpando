@@ -33,8 +33,8 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
   if !hint.hasSuffix(".") { // if no period then add one 
     hint = hint + "."
   }
-
-  var line = (c.notes?.fixup ?? "")+"," + "," + c.question.fixup
+  let notes = allNotes[atPath] ?? ""
+  var line = notes + "," + "," + c.question.fixup
           + "," + c.correct.fixup + ","  + hint + ","
                 + normalize(topic).fixup + ","
   var done = 0
@@ -114,13 +114,13 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
   try outputHandle.close()
   print(">Wrote \(linecount) lines to \(outputCSVFile)")
 }
-
 func process_incoming_csv() {
   print(">Decomposing \(incsv)")
   let colnames =  csvcols.components(separatedBy: ",")
   guard
     let idxdf = colnames.firstIndex(where: {$0=="Op"}),
-   let  notesdf = colnames.firstIndex(where: {$0=="Notes"})
+   let  notesdf = colnames.firstIndex(where: {$0=="Notes"}),
+    let  pathdf = colnames.firstIndex(where: {$0=="Path"})
   else
   {
     fatalError("internal column screwup")
@@ -143,14 +143,15 @@ func process_incoming_csv() {
       let columns = parseCSVLine(row)
       // Check for valdity
       if columns.count != colnames.count {
-        print (">Warning: Row \(rownum) Wrong column count \(columns.count) vs \(colnames.count), probably missing column")
+        if columns.count != 1 { print (">Warning: Row \(rownum) Wrong column count \(columns.count) vs \(colnames.count), probably missing column") }
         continue
       }
 
-      // Passthru the notes field if its not empty
+      // Build a dictionary of all notes encountered
       let def = columns[notesdf].trimmingCharacters(in: .whitespacesAndNewlines)
-      if !def.isEmpty  {
-        trytoreplace(columns)
+      let path = columns[pathdf].trimmingCharacters(in: .whitespacesAndNewlines)
+      if !def.isEmpty,!path.isEmpty  {
+        allNotes[path] = def
       }
       
       // Process any opcode the user may have entered
