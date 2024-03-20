@@ -1,4 +1,5 @@
 #  XPANDO - make ReadyForIOS1
+version 0.3.9 fix preserve notes field in csv
 
 version 0.3.8 preserve notes field in csv
 

@@ -10,16 +10,16 @@ import q20kshare
 
 extension String {
   var fixup : String {
-        // Check if encoding is needed
-        if self.contains(",") || self.contains("\"") {
-            // Replace all instances of double quotes with two double quotes
-            let escapedQuotes = self.replacingOccurrences(of: "\"", with: "\"\"")
-            // Enclose the entire string in double quotes
-            return "\"\(escapedQuotes)\""
-        } else {
-            // No encoding needed
-            return self
-        }
+    // Check if encoding is needed
+    if self.contains(",") || self.contains("\"") {
+      // Replace all instances of double quotes with two double quotes
+      let escapedQuotes = self.replacingOccurrences(of: "\"", with: "\"\"")
+      // Enclose the entire string in double quotes
+      return "\"\(escapedQuotes)\""
+    } else {
+      // No encoding needed
+      return self
+    }
   }
 }
 
@@ -35,8 +35,8 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
   }
   let notes = allNotes[atPath] ?? ""
   var line = notes + "," + "," + c.question.fixup
-          + "," + c.correct.fixup + ","  + hint + ","
-                + normalize(topic).fixup + ","
+  + "," + c.correct.fixup + ","  + hint + ","
+  + normalize(topic).fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
     line += a.fixup + ","
@@ -50,45 +50,46 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
   return line + "\n" // need to separate
 }
 func parseCSVLine(_ line: String) -> [String] {
-    // Resulting array
-    var fields: [String] = []
-    // Temporary field value
-    var currentField = ""
-    // Track if we're inside quotes
-    var insideQuotes = false
-    
-    // Iterate through each character in the line
-    var previousChar: Character = " " // Placeholder for checking previous character
-    for char in line {
-        switch char {
-        case "\"":
-            // If inside quotes, check if next is also a quote (escaped quote)
-            if insideQuotes, previousChar == "\"" {
-                currentField.removeLast() // Remove the added quote from before
-                currentField.append(char) // Add it as part of the value
-            }
-            insideQuotes.toggle()
-        case ",":
-            if insideQuotes {
-                // Comma is part of the value
-                currentField.append(char)
-            } else {
-                // Comma is a delimiter, add field to result and reset currentField
-                fields.append(currentField)
-                currentField = ""
-            }
-        default:
-            // Just a regular character, add it to the current field
-            currentField.append(char)
-        }
-        previousChar = char // Update previousChar at the end of the loop
+  // Resulting array
+  var fields: [String] = []
+  // Temporary field value
+  var currentField = ""
+  // Track if we're inside quotes
+  var insideQuotes = false
+  
+  // Iterate through each character in the line
+  var previousChar: Character = " " // Placeholder for checking previous character
+  for char in line {
+    switch char {
+    case "\"":
+      // If inside quotes, check if next is also a quote (escaped quote)
+      if insideQuotes, previousChar == "\"" {
+        currentField.removeLast() // Remove the added quote from before
+        currentField.append(char) // Add it as part of the value
+      }
+      insideQuotes.toggle()
+    case ",":
+      if insideQuotes {
+        // Comma is part of the value
+        currentField.append(char)
+      } else {
+        // Comma is a delimiter, add field to result and reset currentField
+        fields.append(currentField)
+        currentField = ""
+      }
+    default:
+      // Just a regular character, add it to the current field
+      currentField.append(char)
     }
-    
-    // Add the last field to the result, as it won't be added inside the loop
-    fields.append(currentField)
-    
-    // Return the parsed fields
-    return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    previousChar = char // Update previousChar at the end of the loop
+  }
+  
+  // Add the last field to the result, as it won't be added inside the loop
+  fields.append(currentField)
+  
+  // Return the parsed fields
+  // print("fields:",fields)
+  return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 }
 func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
   
@@ -106,7 +107,7 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
     else { // equal id
       return $0.0.topic < $1.0.topic
     }}
-    ) {
+  ) {
     let x = onelineCSV(from:challenge.0,atPath:challenge.1,subtopics:subtopics)
     outputHandle.write(x.data(using: .utf8)!)
     linecount += 1
@@ -119,7 +120,7 @@ func process_incoming_csv() {
   let colnames =  csvcols.components(separatedBy: ",")
   guard
     let idxdf = colnames.firstIndex(where: {$0=="Op"}),
-   let  notesdf = colnames.firstIndex(where: {$0=="Notes"}),
+    let  notesdf = colnames.firstIndex(where: {$0=="Notes"}),
     let  pathdf = colnames.firstIndex(where: {$0=="Path"})
   else
   {
@@ -146,7 +147,7 @@ func process_incoming_csv() {
         if columns.count != 1 { print (">Warning: Row \(rownum) Wrong column count \(columns.count) vs \(colnames.count), probably missing column") }
         continue
       }
-
+      
       // Build a dictionary of all notes encountered
       let def = columns[notesdf].trimmingCharacters(in: .whitespacesAndNewlines)
       let path = columns[pathdf].trimmingCharacters(in: .whitespacesAndNewlines)
@@ -171,6 +172,7 @@ func process_incoming_csv() {
     print(">File reading error: \(error.localizedDescription)")
   }
   print(">Processed: \(processed), Replaced: \(replaced) Moved: \(deleted) Challenges to Purgatory")
+  //print(allNotes)
 }
 
 func trytodelete(_ columns:[String]){
@@ -195,7 +197,7 @@ func trytodelete(_ columns:[String]){
     print("Couldn't delete: \(question)\n\(error.localizedDescription)")
   }
 }
- 
+
 func trytoreplace(_ columns:[String]){
   let colnames =  csvcols.components(separatedBy: ",")
   guard
@@ -223,7 +225,7 @@ func trytoreplace(_ columns:[String]){
   let ans4 = columns[idx4].trimmingCharacters(in: .whitespacesAndNewlines)
   let notes = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
   
- // let date = columns[idxd].trimmingCharacters(in: .whitespacesAndNewlines)
+  // let date = columns[idxd].trimmingCharacters(in: .whitespacesAndNewlines)
   
   // read original file using the ID field which is really
   
