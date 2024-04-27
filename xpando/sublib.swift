@@ -22,6 +22,20 @@ extension Challenge:Comparable {
   }
 }
 
+extension String {
+  var fixup : String {
+    // Check if encoding is needed
+    if self.contains(",") || self.contains("\"") {
+      // Replace all instances of double quotes with two double quotes
+      let escapedQuotes = self.replacingOccurrences(of: "\"", with: "\"\"")
+      // Enclose the entire string in double quotes
+      return "\"\(escapedQuotes)\""
+    } else {
+      // No encoding needed
+      return self
+    }
+  }
+}
 
 func contained(_ string: String, within: String) -> Bool {
   return within.range(of: string, options: .caseInsensitive) != nil
@@ -46,23 +60,7 @@ func writeDataToFile(data:Data, filePath: String) {
 }
 
 func normalize(_ str: String) -> String {
-  return str.capitalized
-  
-  // Trim and squeeze out unnecessary spaces and tabs
-//  var result = str.trimmingCharacters(in: .whitespacesAndNewlines)
-//  let components = result.components(separatedBy: .whitespacesAndNewlines)
-//  result = components.filter { !$0.isEmpty }.joined(separator: " ")
-//  
-//  // Capitalize the first letter of each word
-//  result = result.capitalized
-//  
-//  // Convert spaces and understores to underscores
-//  result = result.replacingOccurrences(of: " ", with: "_")
-//  
-//  // Convert everything thats not alphanumeric (or underscore or quote) to dashes
-//  result = result.replacingOccurrences(of: "[^a-zA-Z0-9_']+", with: "-", options: .regularExpression)
-//  
-//  return result
+  return str//.capitalized
 }
 
 func testNormalize() {

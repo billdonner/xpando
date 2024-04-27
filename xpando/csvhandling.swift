@@ -8,20 +8,6 @@
 import Foundation
 import q20kshare
 
-extension String {
-  var fixup : String {
-    // Check if encoding is needed
-    if self.contains(",") || self.contains("\"") {
-      // Replace all instances of double quotes with two double quotes
-      let escapedQuotes = self.replacingOccurrences(of: "\"", with: "\"\"")
-      // Enclose the entire string in double quotes
-      return "\"\(escapedQuotes)\""
-    } else {
-      // No encoding needed
-      return self
-    }
-  }
-}
 
 func headerCSV() -> String {
   return csvcols + "\n"
@@ -50,46 +36,44 @@ func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> Str
   return line + "\n" // need to separate
 }
 func parseCSVLine(_ line: String) -> [String] {
-  // Resulting array
-  var fields: [String] = []
-  // Temporary field value
-  var currentField = ""
-  // Track if we're inside quotes
-  var insideQuotes = false
-  
-  // Iterate through each character in the line
-  var previousChar: Character = " " // Placeholder for checking previous character
-  for char in line {
-    switch char {
-    case "\"":
-      // If inside quotes, check if next is also a quote (escaped quote)
-      if insideQuotes, previousChar == "\"" {
-        currentField.removeLast() // Remove the added quote from before
-        currentField.append(char) // Add it as part of the value
-      }
-      insideQuotes.toggle()
-    case ",":
-      if insideQuotes {
-        // Comma is part of the value
-        currentField.append(char)
-      } else {
-        // Comma is a delimiter, add field to result and reset currentField
-        fields.append(currentField)
-        currentField = ""
-      }
-    default:
-      // Just a regular character, add it to the current field
-      currentField.append(char)
+    var fields: [String] = []
+    var currentField = ""
+    var insideQuotes = false
+    
+    var previousChar: Character = "\0" // Use NULL character as a default previous character
+    for char in line {
+        switch char {
+        case "\"":
+            // Check for escaped quote only if previously inside quotes
+            if insideQuotes {
+                if previousChar == "\"" {
+                    if !currentField.isEmpty {
+                        currentField.removeLast() // Safely remove the last added quote
+                    }
+                    currentField.append(char) // Treat it as a quote within the value
+                } // No 'else' needed here; we only toggle 'insideQuotes' when it's NOT escaped
+            }
+            insideQuotes.toggle()
+        case ",":
+            if insideQuotes {
+                // Comma is part of the value
+                currentField.append(char)
+            } else {
+                // Comma is a field delimiter, add field to result and reset currentField
+                fields.append(currentField)
+                currentField = ""
+            }
+        default:
+            // Regular character, just add to current field
+            currentField.append(char)
+        }
+        previousChar = char // Update previousChar at the end of the loop
     }
-    previousChar = char // Update previousChar at the end of the loop
-  }
-  
-  // Add the last field to the result, as it won't be added inside the loop
-  fields.append(currentField)
-  
-  // Return the parsed fields
-  // print("fields:",fields)
-  return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    
+    // Add the last field after the loop ends
+    fields.append(currentField)
+    
+    return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 }
 func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
   

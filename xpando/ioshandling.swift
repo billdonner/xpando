@@ -81,9 +81,6 @@ func iosBlender(_ mergedData:[(Challenge,Path)],tdPath:String,subTopicTree:[Stri
   let xx = groupTopicCounts.reduce(0) { $0 + $1.count }
   print(">GroupTopic count \(groupTopicCounts.count)  challenges \(xx)")
 
-  
-
-  
   let topics =  groupTopicCounts.map {
     var pic = "pencil"
     var notes = "Notes for \(pic)"

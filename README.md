@@ -1,4 +1,9 @@
 #  XPANDO - make ReadyForIOS1
+
+version 0.3.11 fix crash when field starts with a quote
+
+version 0.3.10 don't molest topic names
+
 version 0.3.9 fix preserve notes field in csv
 
 version 0.3.8 preserve notes field in csv
