@@ -34,7 +34,7 @@ func fetchTopicData(_ tdurl:String )   -> TopicGroup {
     return TopicGroup(description: decoded.description, version: decoded.version, author: decoded.author, date: decoded.date, topics: newtops) 
   }
   catch {
-    print("Cant read \(tdurl), substituting")
+    print("Cant read \(tdurl),\n \(error)")
     return TopicGroup(description: "missing", version: "0.0.0", author: "freeport", date: "never", topics: [])
   }
 }

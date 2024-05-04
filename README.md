@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.12 improve error reporting
+
 version 0.3.11 fix crash when field starts with a quote
 
 version 0.3.10 don't molest topic names

@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8824EF0F2BAB5A5A00B8522E /* q20kshare in Frameworks */ = {isa = PBXBuildFile; productRef = 8824EF0E2BAB5A5A00B8522E /* q20kshare */; };
-		8824EF112BAB5A7200B8522E /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 8824EF102BAB5A7200B8522E /* ArgumentParser */; };
 		88570D7D2B45CFB900428C14 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88570D7C2B45CFB900428C14 /* main.swift */; };
+		887E754D2BE6DCEB00AC7851 /* q20kshare in Frameworks */ = {isa = PBXBuildFile; productRef = 887E754C2BE6DCEB00AC7851 /* q20kshare */; };
+		887E754F2BE6DD0300AC7851 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 887E754E2BE6DD0300AC7851 /* ArgumentParser */; };
 		888B84C12B5D743C0055D71F /* csvhandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C02B5D743C0055D71F /* csvhandling.swift */; };
 		888B84C32B5D74AE0055D71F /* ioshandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C22B5D74AE0055D71F /* ioshandling.swift */; };
 		888B84C52B5D757F0055D71F /* sublib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C42B5D757F0055D71F /* sublib.swift */; };
@@ -43,8 +43,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8824EF112BAB5A7200B8522E /* ArgumentParser in Frameworks */,
-				8824EF0F2BAB5A5A00B8522E /* q20kshare in Frameworks */,
+				887E754F2BE6DD0300AC7851 /* ArgumentParser in Frameworks */,
+				887E754D2BE6DCEB00AC7851 /* q20kshare in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,8 +97,8 @@
 			);
 			name = xpando;
 			packageProductDependencies = (
-				8824EF0E2BAB5A5A00B8522E /* q20kshare */,
-				8824EF102BAB5A7200B8522E /* ArgumentParser */,
+				887E754C2BE6DCEB00AC7851 /* q20kshare */,
+				887E754E2BE6DD0300AC7851 /* ArgumentParser */,
 			);
 			productName = xpando;
 			productReference = 88570D792B45CFB900428C14 /* xpando */;
@@ -346,12 +346,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8824EF0E2BAB5A5A00B8522E /* q20kshare */ = {
+		887E754C2BE6DCEB00AC7851 /* q20kshare */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 88570D862B46021700428C14 /* XCRemoteSwiftPackageReference "q20kshare" */;
 			productName = q20kshare;
 		};
-		8824EF102BAB5A7200B8522E /* ArgumentParser */ = {
+		887E754E2BE6DD0300AC7851 /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 88570D832B45D01800428C14 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;

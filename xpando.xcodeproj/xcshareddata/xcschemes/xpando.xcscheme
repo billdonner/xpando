@@ -65,14 +65,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i /users/fs/q20data.csv"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o /users/fs/q20data.csv"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-t /users/fs/topics-info.json"
+            argument = "-t /users/fs/topicinfo.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
