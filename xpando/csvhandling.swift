@@ -193,7 +193,8 @@ func trytoreplace(_ columns:[String]){
     let idx2 = colnames.firstIndex(where: {$0=="Ans-2"}),
     let idx3 = colnames.firstIndex(where: {$0=="Ans-3"}),
     let idx4 = colnames.firstIndex(where: {$0=="Ans-4"}),
-    let idxe = colnames.firstIndex(where: {$0=="Notes"})
+    let idxe = colnames.firstIndex(where: {$0=="Notes"}),
+    let idxtopic = colnames.firstIndex(where: {$0=="Topic"})
   else {
     print ("columns screwup in tryto replace")
     return
@@ -209,6 +210,7 @@ func trytoreplace(_ columns:[String]){
   let ans4 = columns[idx4].trimmingCharacters(in: .whitespacesAndNewlines)
   let notes = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
   
+  let topic = columns[idxtopic].trimmingCharacters(in: .whitespacesAndNewlines)
   // let date = columns[idxd].trimmingCharacters(in: .whitespacesAndNewlines)
   
   // read original file using the ID field which is really
@@ -228,7 +230,7 @@ func trytoreplace(_ columns:[String]){
     
     // make  new challenge and rewrite to filesystem
     
-    let newchallenge = Challenge(question: question, topic: originaltopic, hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: challenge.explanation, id: originalid, date: Date(), aisource: orginalaisource,notes:notes)
+    let newchallenge = Challenge(question: question, topic: topic , hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: challenge.explanation, id: originalid, date: Date(), aisource: orginalaisource,notes:notes)
     
     if let data = try? JSONEncoder().encode(newchallenge){
       print("replacing contents at path " + path)
