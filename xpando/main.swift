@@ -10,7 +10,7 @@ import ArgumentParser
 import q20kshare
  
 let dateFormatter = DateFormatter()
-let csvcols = "Notes,Op,Question,Correct,Hint,Topic ,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
+let csvcols = "Notes,Op,Question,Correct,Hint,Topic,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
 
 var outcsv:String = ""
 var incsv:String = ""
@@ -52,6 +52,8 @@ struct Xpando: ParsableCommand {
   var inputCSVFile: String = ""
 
   mutating func run() throws {
+    var subTopicTree:[String:String]=[:]
+    var topicData:TopicGroup =  TopicGroup(description: "missing", version: "0.0.0", author: "freeport", date: "never", topics: [])
     let decoder = JSONDecoder()
     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS" // "SS" is for hundredths of a second
@@ -64,10 +66,12 @@ struct Xpando: ParsableCommand {
     let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
     print(">Processing: ",directoryPaths.joined(separator:","))
     print(">Filters: ",allfilters.joined(separator: ","))
-    let topicData =   fetchTopicData(tdPath)
-    print(">Topics in topicData: \(topicData.topics.count)")
-    // now build a dictionary marrying subtopics to their main topic
-    let subTopicTree = buildSubtopics(topicData)
+    if tdPath != "" {
+       topicData =   fetchTopicData(tdPath)
+      print(">Topics in topicData: \(topicData.topics.count)")
+      subTopicTree = buildSubtopics(topicData)
+    }
+
     // process incoming csv if we have one
     
     if inputCSVFile != "" {    process_incoming_csv() }

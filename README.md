@@ -1,4 +1,7 @@
 #  XPANDO - make ReadyForIOS1
+
+version 0.3.14 dont complain if tdinfo missing with -t
+
 version 0.3.13 allow editing of topic and always use original topic 
 
 version 0.3.12 improve error reporting

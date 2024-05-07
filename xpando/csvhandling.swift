@@ -165,7 +165,7 @@ func trytodelete(_ columns:[String]){
     let idxid = colnames.firstIndex(where: {$0=="Path"}),
     let questiondf = colnames.firstIndex(where: {$0=="Question"})
   else {
-    print ("columns screwup in tryto delete")
+    print ("***columns screwup in tryto delete")
     return
   }
   
@@ -196,7 +196,7 @@ func trytoreplace(_ columns:[String]){
     let idxe = colnames.firstIndex(where: {$0=="Notes"}),
     let idxtopic = colnames.firstIndex(where: {$0=="Topic"})
   else {
-    print ("columns screwup in tryto replace")
+    print ("***columns screwup in tryto replace")
     return
   }
   
@@ -225,7 +225,7 @@ func trytoreplace(_ columns:[String]){
     }
     
     let originalid = challenge.id
-    let originaltopic = challenge.topic
+   // let originaltopic = challenge.topic
     let orginalaisource = challenge.aisource
     
     // make  new challenge and rewrite to filesystem
