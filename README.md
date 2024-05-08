@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.15 make <outputfile>.csv unique
+
 version 0.3.14 dont complain if tdinfo missing with -t
 
 version 0.3.13 allow editing of topic and always use original topic 

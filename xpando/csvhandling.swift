@@ -79,7 +79,25 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
   
   if challenges.count == 0 { print("No challenges in input"); return}
   
-  if (FileManager.default.createFile(atPath:outputCSVFile, contents: nil, attributes: nil)) {
+  
+  func appendUnixTimestampToFilePath(path: String) -> String {
+      // Get the current time interval since 1970
+      let timestamp = Int(Date().timeIntervalSince1970)
+      
+      guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
+          // If the path does not have an extension, simply append the timestamp
+          return "\(path)\(timestamp)"
+      }
+      
+      // Separate the original file path into base and extension
+      let baseFilePath = (path as NSString).deletingPathExtension
+      
+      // Append the timestamp to the base file path, and then reattach the extension
+      return "\(baseFilePath)-\(timestamp).\(fileExtension)"
+  }
+  
+  
+  if (FileManager.default.createFile(atPath:appendUnixTimestampToFilePath(path: outputCSVFile), contents: nil, attributes: nil)) {
   } else {
     print("\(outputCSVFile) not created."); return
   }
