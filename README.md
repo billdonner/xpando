@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.17 fixes bugs - no data in output csv file;
+
 version 0.3.16 has better error messages
 
 version 0.3.15 make <outputfile>.csv unique

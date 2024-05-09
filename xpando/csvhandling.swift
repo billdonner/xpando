@@ -75,33 +75,36 @@ func parseCSVLine(_ line: String) -> [String] {
     
     return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 }
+
+func appendUnixTimestampToFilePath(path: String) -> String {
+    // Get the current time interval since 1970
+    let timestamp = Int(Date().timeIntervalSince1970)
+    
+    guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
+        // If the path does not have an extension, simply append the timestamp
+        return "\(path)\(timestamp)"
+    }
+    
+    // Separate the original file path into base and extension
+    let baseFilePath = (path as NSString).deletingPathExtension
+    
+    // Append the timestamp to the base file path, and then reattach the extension
+    return "\(baseFilePath)-\(timestamp).\(fileExtension)"
+}
+
 func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
   
   if challenges.count == 0 { print("No challenges in input"); return}
   
   
-  func appendUnixTimestampToFilePath(path: String) -> String {
-      // Get the current time interval since 1970
-      let timestamp = Int(Date().timeIntervalSince1970)
-      
-      guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
-          // If the path does not have an extension, simply append the timestamp
-          return "\(path)\(timestamp)"
-      }
-      
-      // Separate the original file path into base and extension
-      let baseFilePath = (path as NSString).deletingPathExtension
-      
-      // Append the timestamp to the base file path, and then reattach the extension
-      return "\(baseFilePath)-\(timestamp).\(fileExtension)"
-  }
+  let ofile = appendUnixTimestampToFilePath(path: outputCSVFile)
   
   
-  if (FileManager.default.createFile(atPath:appendUnixTimestampToFilePath(path: outputCSVFile), contents: nil, attributes: nil)) {
+  if (FileManager.default.createFile(atPath:ofile, contents: nil, attributes: nil)) {
   } else {
-    print("\(outputCSVFile) not created."); return
+    print("\(ofile) not created."); return
   }
-  let outputHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: outputCSVFile))
+  let outputHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: ofile))
   outputHandle.write(headerCSV().data(using:.utf8)!)
   var linecount = 0
   for challenge in challenges.sorted(by:{    if $0.0.date < $1.0.date { return true }
@@ -115,7 +118,7 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
     linecount += 1
   }
   try outputHandle.close()
-  print(">Wrote \(linecount) lines to \(outputCSVFile)")
+  print(">Wrote \(linecount) lines to \(ofile)")
 }
 func process_incoming_csv() {
   print(">Decomposing \(incsv)")

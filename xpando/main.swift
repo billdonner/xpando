@@ -16,7 +16,6 @@ var outcsv:String = ""
 var incsv:String = ""
 var replaced = 0
 var deleted = 0
-
 var processed = 0
 var included = 0
 
@@ -28,7 +27,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV\n\n***Pay heed to the tdPath argument which is an optional json input file made by SubtopicMaker that controls mapping of topics into subtopics. \n***Pay heed to the input-csv-file argument which is a json input which controls deletions and repairs of particular challenges.",
-    version: "0.3.16",
+    version: "0.3.17",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
