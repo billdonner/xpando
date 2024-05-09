@@ -118,8 +118,25 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
     linecount += 1
   }
   try outputHandle.close()
-  print(">Wrote \(linecount) lines to \(ofile)")
+  print(">Wrote \(linecount) lines to \(outputCSVFile)")
+  try copyFile(from: ofile, to: outputCSVFile)
+  print(">Wrote backup copy to \(ofile)")
 }
+
+func copyFile(from inpath: String, to outputPath: String) throws {
+    let fileManager = FileManager.default
+    
+    if !fileManager.fileExists(atPath: inpath) {
+        throw NSError(domain: "File does not exist", code: 1, userInfo: nil)
+    }
+    
+    if fileManager.fileExists(atPath: outputPath) {
+        try fileManager.removeItem(atPath: outputPath)
+    }
+    
+    try fileManager.copyItem(atPath: inpath, toPath: outputPath)
+}
+
 func process_incoming_csv() {
   print(">Decomposing \(incsv)")
   let colnames =  csvcols.components(separatedBy: ",")

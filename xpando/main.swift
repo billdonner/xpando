@@ -27,7 +27,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV\n\n***Pay heed to the tdPath argument which is an optional json input file made by SubtopicMaker that controls mapping of topics into subtopics. \n***Pay heed to the input-csv-file argument which is a json input which controls deletions and repairs of particular challenges.",
-    version: "0.3.17",
+    version: "0.3.18",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -64,7 +64,9 @@ struct Xpando: ParsableCommand {
     print("Xpando version \(Self.configuration.version)")
     let allfilters = filter == "" ? []:filter.components(separatedBy: ",")
     print(">Processing: ",directoryPaths.joined(separator:","))
-    print(">Filters: ",allfilters.joined(separator: ","))
+    if !allfilters.isEmpty {
+      print(">Filters: ",allfilters.joined(separator: ","))
+    }
     if tdPath != "" {
        topicData =   fetchTopicData(tdPath)
       print(">Topics in topicData: \(topicData.topics.count)")
@@ -73,7 +75,18 @@ struct Xpando: ParsableCommand {
 
     // process incoming csv if we have one
     
-    if inputCSVFile != "" {    process_incoming_csv() }
+    if inputCSVFile != "" {
+      do{
+        let backupfile = appendUnixTimestampToFilePath(path: inputCSVFile)
+        try copyFile(from: inputCSVFile, to: backupfile)
+        print(">Wrote backup copy of input CSV to \(backupfile)")
+      }
+      catch {
+        print("**** Could not backup inputCSVFile \(error)")
+        throw NSError(domain: "File does not exist", code: 1, userInfo: nil)
+      }
+      process_incoming_csv()
+    }
     for dp in directoryPaths {
       
       //walk thru all the files in the directorypaths
@@ -120,7 +133,9 @@ struct Xpando: ParsableCommand {
 
     if dedupe {
       let  dupes = deduplicate()
-      print(">Exact Duplicates detected: \(dupes)")
+      if dupes > 0 {
+        print(">Exact Duplicates detected: \(dupes)")
+      }
     }
 
     // produce CSV file for numbers, excel

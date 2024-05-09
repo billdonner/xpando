@@ -1,6 +1,8 @@
 #  XPANDO - make ReadyForIOS1
+version 0.3.18 make 2 output copies; make 2 input copies
 
-version 0.3.17 fixes bugs - no data in output csv file;
+
+version 0.3.17 fixes bugs - no data in output csv file
 
 version 0.3.16 has better error messages
 
