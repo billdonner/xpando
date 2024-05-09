@@ -126,7 +126,7 @@ func process_incoming_csv() {
     let  pathdf = colnames.firstIndex(where: {$0=="Path"})
   else
   {
-    fatalError("internal column screwup")
+    fatalError("****  internal column screwup")
   }
   var rownum = 0
   var processed = 0
@@ -171,7 +171,7 @@ func process_incoming_csv() {
       processed += 1
     }
   } catch {
-    print(">File reading error: \(error.localizedDescription)")
+    print(">CSV File reading error: \(error.localizedDescription)")
   }
   print(">Processed: \(processed), Replaced: \(replaced) Moved: \(deleted) Challenges to Purgatory")
   //print(allNotes)

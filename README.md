@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.16 has better error messages
+
 version 0.3.15 make <outputfile>.csv unique
 
 version 0.3.14 dont complain if tdinfo missing with -t
