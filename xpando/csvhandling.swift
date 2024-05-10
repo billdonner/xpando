@@ -76,20 +76,20 @@ func parseCSVLine(_ line: String) -> [String] {
     return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 }
 
-func appendUnixTimestampToFilePath(path: String) -> String {
+func appendUnixTimestampToFilePath(path: String,output:Bool ) -> String {
     // Get the current time interval since 1970
     let timestamp = Int(Date().timeIntervalSince1970)
-    
+  let io = output ? "output":"input"
     guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
         // If the path does not have an extension, simply append the timestamp
-        return "\(path)\(timestamp)"
+        return "\(path)-\(io)-\(timestamp)"
     }
     
     // Separate the original file path into base and extension
     let baseFilePath = (path as NSString).deletingPathExtension
     
     // Append the timestamp to the base file path, and then reattach the extension
-    return "\(baseFilePath)-\(timestamp).\(fileExtension)"
+    return "\(baseFilePath)-\(io)-\(timestamp).\(fileExtension)"
 }
 
 func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
@@ -97,7 +97,7 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
   if challenges.count == 0 { print("No challenges in input"); return}
   
   
-  let ofile = appendUnixTimestampToFilePath(path: outputCSVFile)
+  let ofile = appendUnixTimestampToFilePath(path: outputCSVFile,output:true)
   
   
   if (FileManager.default.createFile(atPath:ofile, contents: nil, attributes: nil)) {
@@ -120,7 +120,7 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
   try outputHandle.close()
   print(">Wrote \(linecount) lines to \(outputCSVFile)")
   try copyFile(from: ofile, to: outputCSVFile)
-  print(">Wrote backup copy to \(ofile)")
+  print(">Wrote backup copy of Output CSV to \(ofile)")
 }
 
 func copyFile(from inpath: String, to outputPath: String) throws {
@@ -138,7 +138,7 @@ func copyFile(from inpath: String, to outputPath: String) throws {
 }
 
 func process_incoming_csv() {
-  print(">Decomposing \(incsv)")
+  print(">Decomposing \(outcsv)")
   let colnames =  csvcols.components(separatedBy: ",")
   guard
     let idxdf = colnames.firstIndex(where: {$0=="Op"}),
@@ -269,11 +269,13 @@ func trytoreplace(_ columns:[String]){
     // make  new challenge and rewrite to filesystem
     
     let newchallenge = Challenge(question: question, topic: topic , hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: challenge.explanation, id: originalid, date: Date(), aisource: orginalaisource,notes:notes)
-    
-    if let data = try? JSONEncoder().encode(newchallenge){
-      print("replacing contents at path " + path)
-      print("revised question is \(question)")
-      writeDataToFile(data: data, filePath: path)
+    do {
+      if let data = try? JSONEncoder().encode(newchallenge){
+        print("replacing contents at path " + path)
+        print("revised question is \(question)")
+        print("revised notes is \(notes)")
+        writeDataToFile(data: data, filePath: path)
+      }
     }
     replaced += 1
   }

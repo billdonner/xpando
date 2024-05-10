@@ -77,7 +77,7 @@ struct Xpando: ParsableCommand {
     
     if inputCSVFile != "" {
       do{
-        let backupfile = appendUnixTimestampToFilePath(path: inputCSVFile)
+        let backupfile = appendUnixTimestampToFilePath(path: inputCSVFile,output:false)
         try copyFile(from: inputCSVFile, to: backupfile)
         print(">Wrote backup copy of input CSV to \(backupfile)")
       }

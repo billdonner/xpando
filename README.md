@@ -1,6 +1,8 @@
 #  XPANDO - make ReadyForIOS1
-version 0.3.18 make 2 output copies; make 2 input copies
 
+version 0.3.19 setting notes field in csv pushes change into repaired challenge file, be sure to set repairflag in Op field 
+
+version 0.3.18 make 2 output copies; make 2 input copies
 
 version 0.3.17 fixes bugs - no data in output csv file
 
