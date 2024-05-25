@@ -16,12 +16,18 @@ func headerCSV() -> String {
 func onelineCSV(from c:Challenge,atPath:String,subtopics:[String:String]) -> String {
   let topic = subtopics[c.topic] ?? c.topic
   var hint = c.hint.fixup
-  if !hint.hasSuffix(".") { // if no period then add one 
+  if !hint.hasSuffix(".") { // if no period then add one
     hint = hint + "."
   }
+  
+  var explain = ""
+  if let expl =  c.explanation{
+    explain = expl.fixup
+  }
+    
   let notes = allNotes[atPath] ?? ""
   var line = notes + "," + "," + c.question.fixup
-  + "," + c.correct.fixup + ","  + hint + ","
+  + "," + c.correct.fixup + "," + explain + "," + hint + ","
   + normalize(topic).fixup + ","
   var done = 0
   for a in c.answers.dropLast(max(0,c.answers.count-4)) {
@@ -226,6 +232,7 @@ func trytoreplace(_ columns:[String]){
     let idxid = colnames.firstIndex(where: {$0=="Path"}),
     let idxq = colnames.firstIndex(where: {$0=="Question"}),
     let idxc = colnames.firstIndex(where: {$0=="Correct"}),
+    let idxx = colnames.firstIndex(where: {$0=="Explanation"}),
     let idxh = colnames.firstIndex(where: {$0=="Hint"}),
     let idx1 = colnames.firstIndex(where: {$0=="Ans-1"}),
     let idx2 = colnames.firstIndex(where: {$0=="Ans-2"}),
@@ -247,7 +254,7 @@ func trytoreplace(_ columns:[String]){
   let ans3 = columns[idx3].trimmingCharacters(in: .whitespacesAndNewlines)
   let ans4 = columns[idx4].trimmingCharacters(in: .whitespacesAndNewlines)
   let notes = columns[idxe].trimmingCharacters(in: .whitespacesAndNewlines)
-  
+  let explain = columns[idxx].trimmingCharacters(in: .whitespacesAndNewlines)
   let topic = columns[idxtopic].trimmingCharacters(in: .whitespacesAndNewlines)
   // let date = columns[idxd].trimmingCharacters(in: .whitespacesAndNewlines)
   

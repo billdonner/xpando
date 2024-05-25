@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8848B0842C02772C00E46658 /* q20kshare in Frameworks */ = {isa = PBXBuildFile; productRef = 8848B0832C02772C00E46658 /* q20kshare */; };
+		8848B0862C02774100E46658 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 8848B0852C02774100E46658 /* ArgumentParser */; };
 		88570D7D2B45CFB900428C14 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88570D7C2B45CFB900428C14 /* main.swift */; };
-		887E75562BE9BA0800AC7851 /* q20kshare in Frameworks */ = {isa = PBXBuildFile; productRef = 887E75552BE9BA0800AC7851 /* q20kshare */; };
-		887E75582BE9BA1500AC7851 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 887E75572BE9BA1500AC7851 /* ArgumentParser */; };
 		888B84C12B5D743C0055D71F /* csvhandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C02B5D743C0055D71F /* csvhandling.swift */; };
 		888B84C32B5D74AE0055D71F /* ioshandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C22B5D74AE0055D71F /* ioshandling.swift */; };
 		888B84C52B5D757F0055D71F /* sublib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888B84C42B5D757F0055D71F /* sublib.swift */; };
@@ -43,20 +43,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				887E75582BE9BA1500AC7851 /* ArgumentParser in Frameworks */,
-				887E75562BE9BA0800AC7851 /* q20kshare in Frameworks */,
+				8848B0862C02774100E46658 /* ArgumentParser in Frameworks */,
+				8848B0842C02772C00E46658 /* q20kshare in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8848B0822C02772C00E46658 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		88570D702B45CFB900428C14 = {
 			isa = PBXGroup;
 			children = (
 				88570D892B462E6E00428C14 /* README.md */,
 				88570D7B2B45CFB900428C14 /* xpando */,
 				88570D7A2B45CFB900428C14 /* Products */,
+				8848B0822C02772C00E46658 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -97,8 +105,8 @@
 			);
 			name = xpando;
 			packageProductDependencies = (
-				887E75552BE9BA0800AC7851 /* q20kshare */,
-				887E75572BE9BA1500AC7851 /* ArgumentParser */,
+				8848B0832C02772C00E46658 /* q20kshare */,
+				8848B0852C02774100E46658 /* ArgumentParser */,
 			);
 			productName = xpando;
 			productReference = 88570D792B45CFB900428C14 /* xpando */;
@@ -346,12 +354,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		887E75552BE9BA0800AC7851 /* q20kshare */ = {
+		8848B0832C02772C00E46658 /* q20kshare */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 88570D862B46021700428C14 /* XCRemoteSwiftPackageReference "q20kshare" */;
 			productName = q20kshare;
 		};
-		887E75572BE9BA1500AC7851 /* ArgumentParser */ = {
+		8848B0852C02774100E46658 /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 88570D832B45D01800428C14 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;

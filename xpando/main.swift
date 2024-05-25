@@ -10,7 +10,7 @@ import ArgumentParser
 import q20kshare
  
 let dateFormatter = DateFormatter()
-let csvcols = "Notes,Op,Question,Correct,Hint,Topic,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
+let csvcols = "Notes,Op,Question,Correct,Explanation,Hint,Topic,Ans-1,Ans-2,Ans-3,Ans-4,Path,Date,Model"
 
 var outcsv:String = ""
 var incsv:String = ""
@@ -27,7 +27,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV\n\n***Pay heed to the tdPath argument which is an optional json input file made by SubtopicMaker that controls mapping of topics into subtopics. \n***Pay heed to the input-csv-file argument which is a json input which controls deletions and repairs of particular challenges.",
-    version: "0.3.18",
+    version: "0.3.20",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
