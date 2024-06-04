@@ -275,7 +275,7 @@ func trytoreplace(_ columns:[String]){
     
     // make  new challenge and rewrite to filesystem
     
-    let newchallenge = Challenge(question: question, topic: topic , hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: challenge.explanation, id: originalid, date: Date(), aisource: orginalaisource,notes:notes)
+    let newchallenge = Challenge(question: question, topic: topic , hint: hint, answers: [ans1,ans2,ans3,ans4], correct: correct, explanation: explain, id: originalid, date: Date(), aisource: orginalaisource,notes:notes)
     do {
       if let data = try? JSONEncoder().encode(newchallenge){
         print("replacing contents at path " + path)

@@ -1,4 +1,7 @@
 #  XPANDO - make ReadyForIOS1
+
+version 0.3.21 ensure explanaton is rewritten
+
 version 0.3.20 add explanaton field to csv input/output
 
 version 0.3.19 setting notes field in csv pushes change into repaired challenge file, be sure to set repairflag in Op field 
