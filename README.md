@@ -1,5 +1,7 @@
 #  XPANDO - make ReadyForIOS1
 
+version 0.3.22 name backup file xxx-save.csv, dont write output files
+
 version 0.3.21 ensure explanaton is rewritten
 
 version 0.3.20 add explanaton field to csv input/output

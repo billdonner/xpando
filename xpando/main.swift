@@ -27,7 +27,7 @@ struct Xpando: ParsableCommand {
   
   static let configuration = CommandConfiguration(
     abstract: "XPANDO Builds The Files Needed By QANDA Mobile App and CSV\n\n***Pay heed to the tdPath argument which is an optional json input file made by SubtopicMaker that controls mapping of topics into subtopics. \n***Pay heed to the input-csv-file argument which is a json input which controls deletions and repairs of particular challenges.",
-    version: "0.3.21",
+    version: "0.3.22",
     subcommands: [],
     defaultSubcommand: nil,
     helpNames: [.long, .short]
@@ -77,12 +77,13 @@ struct Xpando: ParsableCommand {
     
     if inputCSVFile != "" {
       do{
-        let backupfile = appendUnixTimestampToFilePath(path: inputCSVFile,output:false)
+        let backupfile = appendSaveToFilePath(path: inputCSVFile,output:false)
         try copyFile(from: inputCSVFile, to: backupfile)
         print(">Wrote backup copy of input CSV to \(backupfile)")
       }
       catch {
         print("**** Could not backup inputCSVFile \(error)")
+        print("**** Perhaps you should remove -i option???")
         throw NSError(domain: "File does not exist", code: 1, userInfo: nil)
       }
       process_incoming_csv()

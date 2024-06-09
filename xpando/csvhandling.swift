@@ -81,31 +81,37 @@ func parseCSVLine(_ line: String) -> [String] {
     
     return fields.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 }
+func appendSaveToFilePath(path:String, output:Bool) -> String {
+  // use -save only
+  let savelit = "save" // Int(Date().timeIntervalSince1970)
 
+  guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
+    // If the path does not have an extension, simply append the timestamp
+    return "\(path)-\(savelit)"
+  }
+  // Separate the original file path into base and extension
+  let baseFilePath = (path as NSString).deletingPathExtension
+  // Append the timestamp to the base file path, and then reattach the extension
+  return "\(baseFilePath)-\(savelit).\(fileExtension)"
+}
 func appendUnixTimestampToFilePath(path: String,output:Bool ) -> String {
-    // Get the current time interval since 1970
-    let timestamp = Int(Date().timeIntervalSince1970)
+  // Get the current time interval since 1970
+  let timestamp = Int(Date().timeIntervalSince1970)
   let io = output ? "output":"input"
-    guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
-        // If the path does not have an extension, simply append the timestamp
-        return "\(path)-\(io)-\(timestamp)"
-    }
-    
-    // Separate the original file path into base and extension
-    let baseFilePath = (path as NSString).deletingPathExtension
-    
-    // Append the timestamp to the base file path, and then reattach the extension
-    return "\(baseFilePath)-\(io)-\(timestamp).\(fileExtension)"
+  guard let fileExtension = NSURL(fileURLWithPath: path).pathExtension, !fileExtension.isEmpty else {
+    // If the path does not have an extension, simply append the timestamp
+    return "\(path)-\(io)-\(timestamp)"
+  }
+  // Separate the original file path into base and extension
+  let baseFilePath = (path as NSString).deletingPathExtension
+  // Append the timestamp to the base file path, and then reattach the extension
+  return "\(baseFilePath)-\(io)-\(timestamp).\(fileExtension)"
 }
 
 func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:[String:String]) throws {
   
   if challenges.count == 0 { print("No challenges in input"); return}
-  
-  
-  let ofile = appendUnixTimestampToFilePath(path: outputCSVFile,output:true)
-  
-  
+  let ofile = outputCSVFile//appendSaveToFilePath(path: outputCSVFile,output:true)
   if (FileManager.default.createFile(atPath:ofile, contents: nil, attributes: nil)) {
   } else {
     print("\(ofile) not created."); return
@@ -125,8 +131,8 @@ func csv_essence( challenges:[(Challenge,Path)],outputCSVFile: String,subtopics:
   }
   try outputHandle.close()
   print(">Wrote \(linecount) lines to \(outputCSVFile)")
-  try copyFile(from: ofile, to: outputCSVFile)
-  print(">Wrote backup copy of Output CSV to \(ofile)")
+ // try copyFile(from: ofile, to: outputCSVFile)
+ // print(">Wrote backup copy of Output CSV to \(ofile)")
 }
 
 func copyFile(from inpath: String, to outputPath: String) throws {
